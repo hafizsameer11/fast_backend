@@ -1,12 +1,13 @@
 <?php
 
 namespace App\Repositories;
-use App\Models\Address;
-class AddressRepository
+use App\Models\SendParcel;
+
+class SendParcelRepository
 {
     public function all()
     {
-        return Address::all(); // Fetches all addresses from the database
+        // Add logic to fetch all data
     }
 
     public function find($id)
@@ -16,8 +17,9 @@ class AddressRepository
 
     public function create(array $data)
     {
-        $address=Address::create($data);
-        return $address;
+        // Add logic to create data
+        return SendParcel::create($data);
+
     }
 
     public function update($id, array $data)

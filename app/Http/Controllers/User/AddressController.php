@@ -19,9 +19,18 @@ class AddressController extends Controller
    public function create(AddressRequest $request){
     try {
         $address = $this->AddressService->create($request->validated());
-        return ResponseHelper::success($adress, "Address created successfully");
+    return ResponseHelper::success($address, "Address created successfully");
     } catch (\Throwable $th) {
         return ResponseHelper::error($th->getMessage(), $th->getCode());
     }
    }
+   public function index()
+{
+    try {
+        $addresses = $this->AddressService->all();
+        return ResponseHelper::success($addresses, "Address list retrieved successfully");
+    } catch (\Throwable $th) {
+        return ResponseHelper::error($th->getMessage(), 500);
+    }
+}
 }

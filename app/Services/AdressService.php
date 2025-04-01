@@ -14,9 +14,9 @@ class AdressService
     }
 
     public function all()
-    {
-        return $this->AdressRepository->all();
-    }
+{
+    return $this->AdressRepository->all();  // Calls the Repository
+}
 
     public function find($id)
     {
