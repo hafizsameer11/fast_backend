@@ -23,6 +23,7 @@ class UserService
         return $this->UserRepository->find($id);
     }
 
+
     public function create(array $data)
     {
         try {

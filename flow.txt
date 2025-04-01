@@ -1,0 +1,5 @@
+controller  php artisan make:controller 'folder/name'
+model php artisan make:model  "name"    -m // create model and migration 
+service and repository   php artisan make:service-repository "name"
+request php artisa make:request "name"
+api ->controller (validate/request handle)  -> service(contain some business logic)->repository (mode /database work)
