@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Hash;
 use App\Mail\OtpMail;
@@ -81,23 +82,24 @@ class UserService
 
     public function login(array $data)
     {
-        $user = $this->UserRepository->findByEmail($data['email']);
-
-        if (!$user) {
-            throw new \Exception("User not found.");
+        $query = User::where('email', $data['email']);
+    
+        if (isset($data['role'])) {
+            $query->where('role', $data['role']);
         }
-
-        if (!Hash::check($data['password'], $user->password)) {
-            throw new \Exception("Invalid email or password.");
+    
+        $user = $query->first();
+    
+        if (!$user || !\Hash::check($data['password'], $user->password)) {
+            throw new \Exception('Invalid credentials.');
         }
-
-        // if (!$user->otp_verified_at) {
-        //     throw new \Exception("Please verify your OTP before logging in.");
+    
+        // if (!$user->otp_verified) {
+        //     throw new \Exception('OTP not verified.');
         // }
-
+    
         return $user;
     }
-
     public function resendOtp(string $email)
     {
         try {

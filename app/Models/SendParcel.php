@@ -9,9 +9,31 @@ class SendParcel extends Model
 {
     use HasFactory;
     protected $fillable = [
-        'user_id', 'total_amount', 'sender_address', 'receiver_address',
-        'sender_name', 'sender_phone', 'receiver_name', 'receiver_phone',
-        'parcel_category', 'parcel_value', 'description', 'payer', 
-        'amount', 'delivery_fee'
+        'user_id',
+        'total_amount',
+        'sender_address',
+        'receiver_address',
+        'sender_name',
+        'sender_phone',
+        'receiver_name',
+        'receiver_phone',
+        'parcel_category',
+        'parcel_value',
+        'description',
+        'payer',
+        'amount',
+        'delivery_fee',
+        'status',
+        'ordered_at',
+        'picked_up_at',
+        'in_transit_at',
+        'delivered_at'
+    ];
+
+    protected $casts = [
+        'ordered_at' => 'datetime',
+        'picked_up_at' => 'datetime',
+        'in_transit_at' => 'datetime',
+        'delivered_at' => 'datetime',
     ];
 }

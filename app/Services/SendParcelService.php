@@ -42,4 +42,8 @@ class SendParcelService
     {
         return $this->sendParcelRepository->delete($id);
     }
+    public function updateStatus($id, $status)
+    {
+        return $this->sendParcelRepository->updateStatus($id, $status);
+    }
 }

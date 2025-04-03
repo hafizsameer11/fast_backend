@@ -10,27 +10,32 @@ use App\Helpers\ResponseHelper;
 
 class AddressController extends Controller
 {
-   protected $AddressService;
+    protected $AddressService;
 
-   public function __construct(AdressService $AddressService)
-   {
-      $this->AddressService= $AddressService;
-   }
-   public function create(AddressRequest $request){
-    try {
-        $address = $this->AddressService->create($request->validated());
-    return ResponseHelper::success($address, "Address created successfully");
-    } catch (\Throwable $th) {
-        return ResponseHelper::error($th->getMessage(), $th->getCode());
+    public function __construct(AdressService $AddressService)
+    {
+        $this->AddressService = $AddressService;
     }
-   }
-   public function index()
-{
-    try {
-        $addresses = $this->AddressService->all();
-        return ResponseHelper::success($addresses, "Address list retrieved successfully");
-    } catch (\Throwable $th) {
-        return ResponseHelper::error($th->getMessage(), 500);
+
+    public function create(AddressRequest $request)
+    {
+        try {
+            $address = $this->AddressService->create($request->validated());
+            return ResponseHelper::success($address, "Address created successfully");
+        } catch (\Throwable $th) {
+            $status = $th->getCode() >= 100 && $th->getCode() <= 599 ? $th->getCode() : 500;
+            return ResponseHelper::error($th->getMessage(), $status);
+        }
     }
-}
+
+    public function index()
+    {
+        try {
+            $addresses = $this->AddressService->all();
+            return ResponseHelper::success($addresses, "Address list retrieved successfully");
+        } catch (\Throwable $th) {
+            $status = $th->getCode() >= 100 && $th->getCode() <= 599 ? $th->getCode() : 500;
+            return ResponseHelper::error($th->getMessage(), $status);
+        }
+    }
 }
