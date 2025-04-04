@@ -7,6 +7,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\LoginRequest;
 use App\Http\Requests\OtpVerificationRequest;
 use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\UpdateProfileRequest;
 use App\Services\UserService;
 use Illuminate\Http\Request;
 
@@ -112,4 +113,13 @@ class AuthController extends Controller
         }
     }
 
+    public function updateProfile(UpdateProfileRequest $request)
+    {
+        try {
+            $user = $this->UserService->updateProfile($request->all());
+            return ResponseHelper::success($user, 'Profile updated successfully');
+        } catch (\Throwable $th) {
+            return ResponseHelper::error($th->getMessage());
+        }
+    }
 }

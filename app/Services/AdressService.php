@@ -14,9 +14,9 @@ class AdressService
     }
 
     public function all()
-{
-    return $this->AdressRepository->all();  // Calls the Repository
-}
+    {
+        return $this->AdressRepository->all();  // Calls the Repository
+    }
 
     public function find($id)
     {
@@ -25,12 +25,12 @@ class AdressService
 
     public function create(array $data)
     {
-    try {
+        try {
 
-        return $this->AdressRepository->create($data);
-    } catch (\Throwable $th) {
-        throw new \Exception("Error creating Address:",$th->getMessage());
-    }
+            return $this->AdressRepository->create($data);
+        } catch (\Throwable $th) {
+            throw new \Exception("Error creating Address:", $th->getMessage());
+        }
     }
 
     public function update($id, array $data)

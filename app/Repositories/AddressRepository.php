@@ -16,17 +16,21 @@ class AddressRepository
 
     public function create(array $data)
     {
-        $address=Address::create($data);
+        $address = Address::create($data);
         return $address;
     }
 
     public function update($id, array $data)
     {
-        // Add logic to update data
+        $address = Address::findOrFail($id);
+        $address->update($data);
+        return $address;
     }
 
     public function delete($id)
     {
-        // Add logic to delete data
+        $address = Address::findOrFail($id);
+        $address->delete();
+        return ['deleted' => true];
     }
 }

@@ -38,4 +38,26 @@ class AddressController extends Controller
             return ResponseHelper::error($th->getMessage(), $status);
         }
     }
+
+    public function update(AddressRequest $request, $id)
+    {
+        try {
+            $address = $this->AddressService->update($id, $request->validated());
+            return ResponseHelper::success($address, "Address updated successfully");
+        } catch (\Throwable $th) {
+            $status = $th->getCode() >= 100 && $th->getCode() <= 599 ? $th->getCode() : 500;
+            return ResponseHelper::error($th->getMessage(), $status);
+        }
+    }
+
+    public function destroy($id)
+    {
+        try {
+            $deleted = $this->AddressService->delete($id);
+            return ResponseHelper::success($deleted, "Address deleted successfully");
+        } catch (\Throwable $th) {
+            $status = $th->getCode() >= 100 && $th->getCode() <= 599 ? $th->getCode() : 500;
+            return ResponseHelper::error($th->getMessage(), $status);
+        }
+    }
 }

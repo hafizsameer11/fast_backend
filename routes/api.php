@@ -7,6 +7,7 @@ use App\Http\Controllers\Rider\AuthController as RiderAuthController;
 use App\Http\Controllers\User\AddressController;
 use App\Http\Controllers\User\SendParcelController;
 use App\Http\Controllers\User\WithdrawalController;
+use App\Http\Controllers\User\ChatController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -60,11 +61,12 @@ Route::prefix("auth/rider")->group(function () {
 });
 
 
-Route::prefix('address')->group(function () {
+Route::middleware('auth:sanctum')->prefix('address')->group(function () {
     Route::post('create', [AddressController::class, 'create']);
-    Route::get('list', [AddressController::class, 'index']); // New route to get the address list
+    Route::get('list', [AddressController::class, 'index']);
+    Route::put('update/{id}', [AddressController::class, 'update']);
+    Route::delete('delete/{id}', [AddressController::class, 'destroy']);
 });
-
 
 Route::prefix('sendparcel')->group(function () {
     Route::post('create', [SendParcelController::class, 'create']);
@@ -78,6 +80,23 @@ Route::prefix('sendparcel')->group(function () {
 Route::prefix('withdrawal')->group(function () {
     Route::post('store', [WithdrawalController::class, 'store']);
     Route::get('list', [WithdrawalController::class, 'index']);
+});
+
+
+Route::prefix('chat')->middleware('auth:sanctum')->group(function () {
+    Route::post('send', [ChatController::class, 'send']);
+    Route::get('messages/{userId}', [ChatController::class, 'getMessagesWithUser']);
+    Route::get('inbox', [ChatController::class, 'inbox']);
+
+    // ✅ Support chat routes
+    Route::post('support/send', [ChatController::class, 'sendSupport']); // user/rider to admin
+    Route::get('support/messages', [ChatController::class, 'supportMessages']); // get support history
+    Route::post('support/reply/{messageId}', [ChatController::class, 'adminReply']); // admin replies
+});
+
+
+Route::middleware('auth:sanctum')->prefix('user')->group(function () {
+    Route::post('update-profile', [AuthController::class, 'updateProfile']);
 });
 
 

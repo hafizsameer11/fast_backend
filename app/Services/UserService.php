@@ -33,20 +33,20 @@ class UserService
         try {
             // Generate a random OTP
             $data['otp'] = rand(100000, 999999);
-    
+
             // Create the user
             $user = $this->UserRepository->create($data);
-    
+
             // Send OTP via email
             Mail::to($user->email)->send(new OtpMail($user->otp));
-    
+
             // Return the created user
             return $user;
         } catch (\Exception $e) {
             throw new \Exception("Error creating user: " . $e->getMessage());
         }
     }
-    
+
 
     public function update($id, array $data)
     {
@@ -83,21 +83,21 @@ class UserService
     public function login(array $data)
     {
         $query = User::where('email', $data['email']);
-    
+
         if (isset($data['role'])) {
             $query->where('role', $data['role']);
         }
-    
+
         $user = $query->first();
-    
+
         if (!$user || !\Hash::check($data['password'], $user->password)) {
             throw new \Exception('Invalid credentials.');
         }
-    
+
         // if (!$user->otp_verified) {
         //     throw new \Exception('OTP not verified.');
         // }
-    
+
         return $user;
     }
     public function resendOtp(string $email)
@@ -171,15 +171,27 @@ class UserService
             if (!$user) {
                 throw new \Exception("User not found.");
             }
-    
+
             $user->password = bcrypt($newPassword);
             $user->save();
-    
+
             return $user;
         } catch (\Exception $e) {
             \Log::error('Password Reset Error: ' . $e->getMessage());
             throw new \Exception('Could not reset password.');
         }
     }
-    
+    public function updateProfile($data)
+    {
+        $user = auth()->user();
+
+        if (isset($data['profile_picture'])) {
+            $path = $data['profile_picture']->store('profile_pictures', 'public');
+            $data['profile_picture'] = $path;
+        }
+
+        $user->update($data);
+        return $user;
+    }
+
 }
