@@ -2,6 +2,7 @@
 
 // use App\Http\Controllers\Rider\AuthController;
 
+use App\Http\Controllers\Rider\RiderVerificationController;
 use App\Http\Controllers\User\AuthController;
 use App\Http\Controllers\Rider\AuthController as RiderAuthController;
 use App\Http\Controllers\User\AddressController;
@@ -59,6 +60,12 @@ Route::prefix("auth/rider")->group(function () {
     Route::post("forget-password", [RiderAuthController::class, "forgotPassword"]);
     Route::post("verify-forget-password-otp", [RiderAuthController::class, "verifyForgetPasswordOtp"]);
     Route::post("reset-password", [RiderAuthController::class, "resetPassword"]);
+});
+
+Route::prefix('auth/rider/verification')->middleware('auth:sanctum')->group(function () {
+    Route::post('step-1', [RiderVerificationController::class, 'step1']);
+    Route::post('step-2', [RiderVerificationController::class, 'step2']);
+    Route::post('step-3', [RiderVerificationController::class, 'step3']);
 });
 
 
