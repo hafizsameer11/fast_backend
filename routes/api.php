@@ -8,6 +8,7 @@ use App\Http\Controllers\User\AddressController;
 use App\Http\Controllers\User\SendParcelController;
 use App\Http\Controllers\User\WithdrawalController;
 use App\Http\Controllers\User\ChatController;
+use App\Http\Controllers\User\FaqController;
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -99,6 +100,16 @@ Route::middleware('auth:sanctum')->prefix('user')->group(function () {
     Route::post('update-profile', [AuthController::class, 'updateProfile']);
 });
 
+
+Route::prefix('faqs')->middleware('auth:sanctum')->group(function () {
+    Route::get('/user', [FaqController::class, 'userFaqs']);
+    Route::get('/rider', [FaqController::class, 'riderFaqs']);
+
+    // ✅ Admin routes for managing FAQs
+    Route::post('/create', [FaqController::class, 'store']);
+    Route::put('/update/{id}', [FaqController::class, 'update']);
+    Route::delete('/delete/{id}', [FaqController::class, 'destroy']);
+});
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
