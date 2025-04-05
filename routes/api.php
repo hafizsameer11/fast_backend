@@ -103,6 +103,11 @@ Route::prefix('parcel-review')->middleware('auth:sanctum')->group(function () {
     Route::post('submit', [ParcelReviewController::class, 'submit']);
 });
 
+Route::middleware('auth:sanctum')->prefix('history')->group(function () {
+    Route::get('rider', [\App\Http\Controllers\Api\HistoryController::class, 'riderHistory']);
+    Route::get('user', [\App\Http\Controllers\Api\HistoryController::class, 'userHistory']);
+});
+
 
 Route::prefix('withdrawal')->group(function () {
     Route::post('store', [WithdrawalController::class, 'store']);
