@@ -38,11 +38,14 @@ return new class extends Migration {
             $table->unsignedBigInteger('accepted_bid_id')->nullable();
             $table->boolean('is_assigned')->default(false);
 
-            
             $table->string('pickup_code', 4)->nullable();
             $table->string('delivery_code', 4)->nullable();
             $table->string('is_pickup_confirmed')->default('no');
             $table->string('is_delivery_confirmed')->default('no');
+
+            // ✅ Remove ->after() here – not supported in create
+            $table->decimal('current_latitude', 10, 7)->nullable();
+            $table->decimal('current_longitude', 10, 7)->nullable();
         });
     }
 

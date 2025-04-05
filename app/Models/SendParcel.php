@@ -30,6 +30,8 @@ class SendParcel extends Model
         'delivered_at',
         'is_pickup_confirmed',      // ✅ ensure this is here
         'is_delivery_confirmed',    // ✅ ensure this is here
+        'current_latitude',
+        'current_longitude',
     ];
 
     protected $casts = [

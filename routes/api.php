@@ -99,6 +99,10 @@ Route::prefix('parcel-bid')->middleware('auth:sanctum')->group(function () {
     Route::put('rider-accept/{bidId}', [ParcelBidController::class, 'riderAccept']); // rider accepts user bid
 });
 
+Route::middleware('auth:sanctum')->prefix('sendparcel')->group(function () {
+    Route::post('{id}/update-location', [\App\Http\Controllers\Api\SendParcelController::class, 'updateLocation']);
+});
+
 Route::prefix('parcel-review')->middleware('auth:sanctum')->group(function () {
     Route::post('submit', [ParcelReviewController::class, 'submit']);
 });

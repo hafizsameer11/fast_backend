@@ -55,24 +55,24 @@ class SendParcelController extends Controller
     {
         // Validate pickup_code
         $request->validate(['pickup_code' => 'required|digits:4']);
-    
+
         // Debugging: Output the pickup_code received from the request
         echo "Received Pickup Code: " . $request->pickup_code . "\n";
-    
+
         // Verify the pickup code via the service
         $result = $this->sendParcelService->verifyPickupCode($id, $request->pickup_code);
-    
+
         // Debugging: Output the verification result
         echo "Verification Result: " . ($result ? 'Success' : 'Failed') . "\n";
-    
+
         // Check the result of the verification
         if (!$result) {
             return ResponseHelper::error("Invalid pickup code.");
         }
-    
+
         return ResponseHelper::success(null, "Pickup confirmed.");
     }
-    
+
 
     public function confirmDelivery(Request $request, $id)
     {
@@ -86,4 +86,26 @@ class SendParcelController extends Controller
 
         return ResponseHelper::success(null, "Delivery confirmed.");
     }
+
+    public function updateLocation(Request $request, $id)
+    {
+        $request->validate([
+            'latitude' => 'required|numeric|between:-90,90',
+            'longitude' => 'required|numeric|between:-180,180',
+        ]);
+
+        $parcel = $this->sendParcelService->find($id);
+
+        if (!$parcel || auth()->id() != $parcel->rider_id) {
+            return ResponseHelper::error("Unauthorized or parcel not found.");
+        }
+
+        $parcel->update([
+            'current_latitude' => $request->latitude,
+            'current_longitude' => $request->longitude,
+        ]);
+
+        return ResponseHelper::success($parcel, "Location updated.");
+    }
+
 }
