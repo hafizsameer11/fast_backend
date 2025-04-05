@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class SendMessageRequest extends FormRequest
 {
@@ -26,5 +27,13 @@ class SendMessageRequest extends FormRequest
             'sender_type' => 'required|in:user,rider', // Ensure it's valid sender type
             'message' => 'required|string|min:1',
         ];
+    }
+    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'status' => 'error',
+            'data' => $validator->errors(),
+            'message' => $validator->errors()->first()
+        ], 422));
     }
 }

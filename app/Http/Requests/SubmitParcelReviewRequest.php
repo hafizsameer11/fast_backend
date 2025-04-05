@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class SubmitParcelReviewRequest extends FormRequest
 {
@@ -27,5 +28,13 @@ class SubmitParcelReviewRequest extends FormRequest
             'rating' => 'required|integer|min:1|max:5',
             'review' => 'required|string|max:1000',
         ];
+    }
+    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'status' => 'error',
+            'data' => $validator->errors(),
+            'message' => $validator->errors()->first()
+        ], 422));
     }
 }

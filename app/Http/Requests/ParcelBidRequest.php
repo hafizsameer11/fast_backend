@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class ParcelBidRequest extends FormRequest
 {
@@ -26,5 +27,13 @@ class ParcelBidRequest extends FormRequest
             'bid_amount' => 'nullable|numeric',
             'message' => 'nullable|string|max:255',
         ];
+    }
+    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'status' => 'error',
+            'data' => $validator->errors(),
+            'message' => $validator->errors()->first()
+        ], 422));
     }
 }

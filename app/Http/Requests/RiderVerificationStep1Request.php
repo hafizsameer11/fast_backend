@@ -3,6 +3,7 @@
 namespace App\Http\Requests;
 
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
 class RiderVerificationStep1Request extends FormRequest
 {
@@ -29,5 +30,13 @@ class RiderVerificationStep1Request extends FormRequest
             'address' => 'required|string',
             'nin_number' => 'required|string',
         ];
+    }
+    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
+    {
+        throw new HttpResponseException(response()->json([
+            'status' => 'error',
+            'data' => $validator->errors(),
+            'message' => $validator->errors()->first()
+        ], 422));
     }
 }
