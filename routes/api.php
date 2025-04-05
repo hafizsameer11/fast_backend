@@ -2,6 +2,8 @@
 
 // use App\Http\Controllers\Rider\AuthController;
 
+use App\Http\Controllers\ParcelBidController;
+use App\Http\Controllers\ParcelReviewController;
 use App\Http\Controllers\Rider\RiderVerificationController;
 use App\Http\Controllers\User\AuthController;
 use App\Http\Controllers\Rider\AuthController as RiderAuthController;
@@ -76,13 +78,30 @@ Route::middleware('auth:sanctum')->prefix('address')->group(function () {
     Route::delete('delete/{id}', [AddressController::class, 'destroy']);
 });
 
-Route::prefix('sendparcel')->group(function () {
+
+Route::prefix('sendparcel')->middleware('auth:sanctum')->group(function () {
     Route::post('create', [SendParcelController::class, 'create']);
     Route::get('list', action: [SendParcelController::class, 'index']);
     Route::put('{id}/status', [SendParcelController::class, 'updateStatus']); // ✅ new route
+
+    Route::post('{id}/confirm-pickup', [SendParcelController::class, 'confirmPickup']);
+    Route::post('{id}/confirm-delivery', [SendParcelController::class, 'confirmDelivery']);
 });
 
 
+Route::prefix('parcel-bid')->middleware('auth:sanctum')->group(function () {
+    Route::post('create', [ParcelBidController::class, 'store']); // rider
+    Route::post('create-by-user', [ParcelBidController::class, 'storeByUser']); // user
+
+    Route::get('{parcelId}/list', [ParcelBidController::class, 'list']); // both
+
+    Route::put('accept/{bidId}', [ParcelBidController::class, 'accept']); // user accepts rider bid
+    Route::put('rider-accept/{bidId}', [ParcelBidController::class, 'riderAccept']); // rider accepts user bid
+});
+
+Route::prefix('parcel-review')->middleware('auth:sanctum')->group(function () {
+    Route::post('submit', [ParcelReviewController::class, 'submit']);
+});
 
 
 Route::prefix('withdrawal')->group(function () {

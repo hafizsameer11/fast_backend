@@ -33,7 +33,7 @@ class SendParcelController extends Controller
     public function index()
     {
         try {
-            $parcels = $this->sendParcelService->all();
+            $parcels = $this->sendParcelService->all()->map(fn($p) => $p->fresh());
             return ResponseHelper::success($parcels, "Parcel list retrieved successfully");
         } catch (\Throwable $th) {
             $status = $th->getCode() >= 100 && $th->getCode() <= 599 ? $th->getCode() : 500;
@@ -50,5 +50,40 @@ class SendParcelController extends Controller
             $status = $th->getCode() >= 100 && $th->getCode() <= 599 ? $th->getCode() : 500;
             return ResponseHelper::error($th->getMessage(), $status);
         }
+    }
+    public function confirmPickup(Request $request, $id)
+    {
+        // Validate pickup_code
+        $request->validate(['pickup_code' => 'required|digits:4']);
+    
+        // Debugging: Output the pickup_code received from the request
+        echo "Received Pickup Code: " . $request->pickup_code . "\n";
+    
+        // Verify the pickup code via the service
+        $result = $this->sendParcelService->verifyPickupCode($id, $request->pickup_code);
+    
+        // Debugging: Output the verification result
+        echo "Verification Result: " . ($result ? 'Success' : 'Failed') . "\n";
+    
+        // Check the result of the verification
+        if (!$result) {
+            return ResponseHelper::error("Invalid pickup code.");
+        }
+    
+        return ResponseHelper::success(null, "Pickup confirmed.");
+    }
+    
+
+    public function confirmDelivery(Request $request, $id)
+    {
+        $request->validate(['delivery_code' => 'required|digits:4']);
+
+        $result = $this->sendParcelService->verifyDeliveryCode($id, $request->delivery_code);
+
+        if (!$result) {
+            return ResponseHelper::error("Invalid delivery code.");
+        }
+
+        return ResponseHelper::success(null, "Delivery confirmed.");
     }
 }

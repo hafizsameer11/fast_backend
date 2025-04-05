@@ -27,7 +27,9 @@ class SendParcel extends Model
         'ordered_at',
         'picked_up_at',
         'in_transit_at',
-        'delivered_at'
+        'delivered_at',
+        'is_pickup_confirmed',      // ✅ ensure this is here
+        'is_delivery_confirmed',    // ✅ ensure this is here
     ];
 
     protected $casts = [
@@ -35,5 +37,17 @@ class SendParcel extends Model
         'picked_up_at' => 'datetime',
         'in_transit_at' => 'datetime',
         'delivered_at' => 'datetime',
+        // 'is_delivery_confirmed' => 'boolean',
+        // 'is_pickup_confirmed' => 'boolean',
     ];
+
+    public function bids()
+    {
+        return $this->hasMany(ParcelBid::class);
+    }
+
+    public function acceptedBid()
+    {
+        return $this->belongsTo(ParcelBid::class, 'accepted_bid_id');
+    }
 }

@@ -12,7 +12,7 @@ class SendParcelRepository
 
     public function find($id)
     {
-        // Add logic to find data by ID
+        return SendParcel::with('acceptedBid', 'bids')->find($id)?->fresh(); // ensures latest data
     }
 
     public function create(array $data)
@@ -28,7 +28,9 @@ class SendParcelRepository
 
     public function update($id, array $data)
     {
-        // Add logic to update data
+        $parcel = SendParcel::findOrFail($id);
+        $parcel->update($data);
+        return $parcel;
     }
 
     public function delete($id)
