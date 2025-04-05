@@ -2,6 +2,7 @@
 
 // use App\Http\Controllers\Rider\AuthController;
 
+use App\Http\Controllers\Api\HistoryController;
 use App\Http\Controllers\ParcelBidController;
 use App\Http\Controllers\ParcelReviewController;
 use App\Http\Controllers\Rider\RiderVerificationController;
@@ -40,6 +41,18 @@ Route::get('/optimize-app', function () {
     return "Application optimized and caches cleared successfully!";
 });
 
+Route::get('/migrate', function () {
+    Artisan::call('migrate');
+    return response()->json(['message' => 'Migration successful'], 200);
+});
+Route::get('/migrate/rollback', function () {
+    Artisan::call('migrate:rollback');
+    return response()->json(['message' => 'Migration rollback successfully'], 200);
+});
+
+Route::get('/unatuh',function(){
+    return response()->json("unauthorized",401);
+})->name('login');
 Route::prefix("auth/user")->group(function () {
     Route::post("register", [AuthController::class, "register"]);
     Route::post('/otp-verification', [AuthController::class, 'otpVerification']);
@@ -100,7 +113,7 @@ Route::prefix('parcel-bid')->middleware('auth:sanctum')->group(function () {
 });
 
 Route::middleware('auth:sanctum')->prefix('sendparcel')->group(function () {
-    Route::post('{id}/update-location', [\App\Http\Controllers\Api\SendParcelController::class, 'updateLocation']);
+    Route::post('{id}/update-location', [SendParcelController::class, 'updateLocation']);
 });
 
 Route::prefix('parcel-review')->middleware('auth:sanctum')->group(function () {
@@ -108,8 +121,8 @@ Route::prefix('parcel-review')->middleware('auth:sanctum')->group(function () {
 });
 
 Route::middleware('auth:sanctum')->prefix('history')->group(function () {
-    Route::get('rider', [\App\Http\Controllers\Api\HistoryController::class, 'riderHistory']);
-    Route::get('user', [\App\Http\Controllers\Api\HistoryController::class, 'userHistory']);
+    Route::get('rider', [HistoryController::class, 'riderHistory']);
+    Route::get('user', [HistoryController::class, 'userHistory']);
 });
 
 
