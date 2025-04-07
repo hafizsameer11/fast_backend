@@ -32,6 +32,14 @@ class SendParcel extends Model
         'is_delivery_confirmed',    // ✅ ensure this is here
         'current_latitude',
         'current_longitude',
+
+        'parcel_name',
+        'payment_method',
+        'pay_on_delivery',
+        'schedule_type',
+        'scheduled_date',
+        'scheduled_time',
+
     ];
 
     protected $casts = [

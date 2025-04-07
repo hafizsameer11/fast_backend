@@ -103,9 +103,10 @@ class AuthController extends Controller
         try {
             $request->validate([
                 'email' => 'required|email|exists:users,email',
-                'password' => 'required|string|min:6|confirmed'
+                'password' => 'required|string|min:6|confirmed',
+            ], [
+                'password.confirmed' => 'Password and confirmation do not match.',
             ]);
-
             $user = $this->UserService->resetPassword($request->email, $request->password);
             return ResponseHelper::success($user, 'Password reset successfully', 200);
         } catch (\Exception $e) {

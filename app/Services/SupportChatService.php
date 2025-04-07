@@ -51,4 +51,15 @@ class SupportChatService
     {
         return $this->supportChatRepository->replyToMessage($messageId, $message);
     }
+    public function getSupportChats($userId)
+    {
+        try {
+            return $this->supportChatRepository->getByUserId($userId);
+        } catch (\Throwable $th) {
+            throw new \Exception('Error fetching support chats: ' . $th->getMessage());
+        }
+    }
+    
+
+
 }

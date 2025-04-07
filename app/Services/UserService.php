@@ -72,6 +72,8 @@ class UserService
 
         // Mark OTP as verified
         $this->UserRepository->update($user->id, [
+            'email_verified_at' => now(),
+            'otp_verified' => 1,
             'otp_verified_at' => now(),
             'otp' => null, // Clear OTP after successful verification
         ]);

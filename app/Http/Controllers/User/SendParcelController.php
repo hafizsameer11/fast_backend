@@ -4,6 +4,10 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\UpdateParcelStatusRequest;
+use App\Http\Requests\User\StepFourRequest;
+use App\Http\Requests\User\StepOneRequest;
+use App\Http\Requests\User\StepThreeRequest;
+use App\Http\Requests\User\StepTwoRequest;
 use Illuminate\Http\Request;
 use App\Services\SendParcelService;
 use App\Helpers\ResponseHelper;
@@ -29,6 +33,44 @@ class SendParcelController extends Controller
             return ResponseHelper::error($th->getMessage());
         }
     }
+    public function createStepOne(StepOneRequest $request)
+    {
+        $data = $request->validated();
+        $data['user_id'] = auth()->id();
+        $data['status'] = 'draft';
+
+        $parcel = $this->sendParcelService->create($data);
+        return ResponseHelper::success($parcel, 'Step 1 completed');
+    }
+
+    public function stepTwo(StepTwoRequest $request, $id)
+    {
+        $parcel = $this->sendParcelService->update($id, $request->validated());
+        return ResponseHelper::success($parcel, 'Step 2 completed');
+    }
+
+    public function stepThree(StepThreeRequest $request, $id)
+    {
+        $parcel = $this->sendParcelService->update($id, $request->validated());
+        return ResponseHelper::success($parcel, 'Step 3 completed');
+    }
+
+    public function stepFour(StepFourRequest $request, $id)
+    {
+        $data = $request->validated();
+
+        // 🔁 Map boolean to 'yes' or 'no'
+        $data['pay_on_delivery'] = $data['pay_on_delivery'] ? 'yes' : 'no';
+
+        $data['status'] = 'ordered';
+        $data['ordered_at'] = now();
+        $data['pickup_code'] = rand(1000, 9999);
+        $data['delivery_code'] = rand(1000, 9999);
+
+        $parcel = $this->sendParcelService->update($id, $data);
+        return ResponseHelper::success($parcel, 'Parcel finalized and sent');
+    }
+
 
     public function index()
     {
@@ -51,6 +93,7 @@ class SendParcelController extends Controller
             return ResponseHelper::error($th->getMessage(), $status);
         }
     }
+
     public function confirmPickup(Request $request, $id)
     {
         // Validate pickup_code

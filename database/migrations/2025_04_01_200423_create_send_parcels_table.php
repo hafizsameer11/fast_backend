@@ -10,25 +10,40 @@ return new class extends Migration {
         Schema::create('send_parcels', function (Blueprint $table) {
             $table->id();
             $table->timestamps();
-            
+
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
 
-            $table->decimal('total_amount', 10, 2);
+            // Step 1
             $table->string('sender_address');
             $table->string('receiver_address');
-            $table->string('sender_name');
-            $table->string('sender_phone');
-            $table->string('receiver_name');
-            $table->string('receiver_phone');
-            $table->string('parcel_category');
-            $table->decimal('parcel_value', 10, 2);
-            $table->text('description')->nullable();
-            $table->string('payer'); // sender, receiver, third-party
-            $table->decimal('amount', 10, 2);
-            $table->decimal('delivery_fee', 10, 2);
 
-            $table->enum('status', ['ordered', 'picked_up', 'in_transit', 'delivered'])->default('ordered');
+            $table->enum('schedule_type', ['immediate', 'scheduled'])->default('immediate');
+            $table->date('scheduled_date')->nullable();
+            $table->time('scheduled_time')->nullable();
+
+            // Step 2
+            $table->string('sender_name')->nullable();
+            $table->string('sender_phone')->nullable();
+            $table->string('receiver_name')->nullable();
+            $table->string('receiver_phone')->nullable();
+
+            // Step 3
+            $table->string('parcel_name')->nullable();
+            $table->string('parcel_category')->nullable();
+            $table->decimal('parcel_value', 10, 2)->nullable();
+            $table->text('description')->nullable();
+
+            // Step 4
+            $table->string('payer')->nullable(); // sender, receiver, third-party
+            $table->enum('payment_method', ['wallet', 'bank'])->nullable();
+            $table->enum('pay_on_delivery', ['yes', 'no'])->default('no');
+            $table->decimal('amount', 10, 2)->nullable();
+            $table->decimal('delivery_fee', 10, 2)->nullable();
+            $table->decimal('total_amount', 10, 2)->nullable();
+
+            // Tracking + status
+            $table->enum('status', ['draft', 'ordered', 'picked_up', 'in_transit', 'delivered'])->default('draft');
             $table->timestamp('ordered_at')->nullable();
             $table->timestamp('picked_up_at')->nullable();
             $table->timestamp('in_transit_at')->nullable();
@@ -43,7 +58,6 @@ return new class extends Migration {
             $table->string('is_pickup_confirmed')->default('no');
             $table->string('is_delivery_confirmed')->default('no');
 
-            // ✅ Remove ->after() here – not supported in create
             $table->decimal('current_latitude', 10, 7)->nullable();
             $table->decimal('current_longitude', 10, 7)->nullable();
         });

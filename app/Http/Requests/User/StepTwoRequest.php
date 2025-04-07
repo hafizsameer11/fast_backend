@@ -1,23 +1,32 @@
 <?php
 
-namespace App\Http\Requests;
+namespace App\Http\Requests\User;
 
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Http\Exceptions\HttpResponseException;
 
-class RiderVerificationStep3Request extends FormRequest
+class StepTwoRequest extends FormRequest
 {
+    /**
+     * Determine if the user is authorized to make this request.
+     */
     public function authorize(): bool
     {
         return true;
     }
 
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
+     */
     public function rules(): array
     {
         return [
-            'passport_photo' => 'required|image|mimes:jpg,jpeg,png|max:2048',
-            'rider_permit_upload' => 'required|mimes:jpg,jpeg,png,pdf|max:2048',
-            'vehicle_video' => 'required|mimes:mp4,mov,avi,webm|max:10240', // 10MB max
+            'sender_name' => 'required|string',
+            'sender_phone' => 'required|string',
+            'receiver_name' => 'required|string',
+            'receiver_phone' => 'required|string',
         ];
     }
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
@@ -28,5 +37,4 @@ class RiderVerificationStep3Request extends FormRequest
             'message' => $validator->errors()->first()
         ], 422));
     }
-
 }

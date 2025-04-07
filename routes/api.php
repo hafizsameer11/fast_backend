@@ -59,6 +59,8 @@ Route::get('/migrate/fresh', function () { // migrate:fresh
 Route::get('/unatuh', function () {
     return response()->json("unauthorized", 401);
 })->name('login');
+
+
 Route::prefix("auth/user")->group(function () {
     Route::post("register", [AuthController::class, "register"]);
     Route::post('/otp-verification', [AuthController::class, 'otpVerification']);
@@ -99,8 +101,26 @@ Route::middleware('auth:sanctum')->prefix('address')->group(function () {
 
 
 Route::prefix('sendparcel')->middleware('auth:sanctum')->group(function () {
-    Route::post('create', [SendParcelController::class, 'create']);
+    
+    // Route::post('create', [SendParcelController::class, 'create']);
+
+
+    // STEP 1: Create Parcel Shell with sender/receiver addresses and schedule
+    Route::post('create-step-one', [SendParcelController::class, 'createStepOne']);
+
+    // STEP 2: Add Contact Info (names, phones)
+    Route::post('{id}/step-two', [SendParcelController::class, 'stepTwo']);
+
+    // STEP 3: Add Parcel Info (item details)
+    Route::post('{id}/step-three', [SendParcelController::class, 'stepThree']);
+
+    // STEP 4: Final Step (Payment details + finalize)
+    Route::post('{id}/step-four', [SendParcelController::class, 'stepFour']);
+
+
+
     Route::get('list', action: [SendParcelController::class, 'index']);
+
     Route::put('{id}/status', [SendParcelController::class, 'updateStatus']); // ✅ new route
 
     Route::post('{id}/confirm-pickup', [SendParcelController::class, 'confirmPickup']);
@@ -109,13 +129,18 @@ Route::prefix('sendparcel')->middleware('auth:sanctum')->group(function () {
 
 
 Route::prefix('parcel-bid')->middleware('auth:sanctum')->group(function () {
+    
     Route::post('create', [ParcelBidController::class, 'store']); // rider
+
+
     Route::post('create-by-user', [ParcelBidController::class, 'storeByUser']); // user
 
     Route::get('{parcelId}/list', [ParcelBidController::class, 'list']); // both
 
     Route::put('accept/{bidId}', [ParcelBidController::class, 'accept']); // user accepts rider bid
+
     Route::put('rider-accept/{bidId}', [ParcelBidController::class, 'riderAccept']); // rider accepts user bid
+
 });
 
 Route::middleware('auth:sanctum')->prefix('sendparcel')->group(function () {

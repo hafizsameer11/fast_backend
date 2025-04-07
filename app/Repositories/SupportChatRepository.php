@@ -37,9 +37,9 @@ class SupportChatRepository
     public function getMessages($senderId, $receiverId)
     {
         return SupportChat::where(function ($query) use ($senderId, $receiverId) {
-                $query->where('sender_id', $senderId)->where('receiver_id', $receiverId)
-                      ->orWhere('sender_id', $receiverId)->where('receiver_id', $senderId);
-            })
+            $query->where('sender_id', $senderId)->where('receiver_id', $receiverId)
+                ->orWhere('sender_id', $receiverId)->where('receiver_id', $senderId);
+        })
             ->orderBy('created_at', 'asc')
             ->get();
     }
@@ -52,5 +52,9 @@ class SupportChatRepository
         $chat->save();
 
         return $chat;
+    }
+    public function getByUserId($userId)
+    {
+        return SupportChat::where('user_id', $userId)->get();
     }
 }

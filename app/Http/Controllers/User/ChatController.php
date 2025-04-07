@@ -86,12 +86,12 @@ class ChatController extends Controller
     {
         try {
             $userId = auth()->id();
-            $role = auth()->user()->role;
-
-            $chats = $this->supportChatService->getSupportChats($userId, $role);
+            $chats = $this->supportChatService->getSupportChats($userId);
+    
             return ResponseHelper::success($chats, "Support messages retrieved");
         } catch (\Throwable $th) {
             return ResponseHelper::error($th->getMessage());
         }
     }
+    
 }
