@@ -50,8 +50,14 @@ Route::get('/migrate/rollback', function () {
     return response()->json(['message' => 'Migration rollback successfully'], 200);
 });
 
-Route::get('/unatuh',function(){
-    return response()->json("unauthorized",401);
+Route::get('/migrate/fresh', function () { // migrate:fresh
+    Artisan::call('migrate:fresh');
+    return response()->json(['message' => 'Migration fresh successfully'], 200);
+});
+
+
+Route::get('/unatuh', function () {
+    return response()->json("unauthorized", 401);
 })->name('login');
 Route::prefix("auth/user")->group(function () {
     Route::post("register", [AuthController::class, "register"]);
