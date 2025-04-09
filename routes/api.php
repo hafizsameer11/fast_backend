@@ -167,6 +167,8 @@ Route::prefix('chat')->middleware('auth:sanctum')->group(function () {
     Route::post('send', [ChatController::class, 'send']);
     Route::get('messages/{userId}', [ChatController::class, 'getMessagesWithUser']);
     Route::get('inbox', [ChatController::class, 'inbox']);
+    Route::get('connected-users', [ChatController::class, 'connectedUsers']); // 🔥 new
+
 
     // ✅ Support chat routes
     Route::post('support/send', [ChatController::class, 'sendSupport']); // user/rider to admin

@@ -25,18 +25,42 @@ class ChatController extends Controller
     public function send(ChatRequest $request)
     {
         try {
+            $recipientId = $request->input('receiver_id');
+            $riderId = auth()->id();
+    
+            if (!$this->chatService->isRiderConnectedToUser($riderId, $recipientId)) {
+                return ResponseHelper::error("You are not allowed to chat with this user.");
+            }
+    
             $chat = $this->chatService->sendMessage($request->validated());
             return ResponseHelper::success($chat, "Message sent successfully");
         } catch (\Throwable $th) {
             return ResponseHelper::error($th->getMessage());
         }
     }
-
+    
     public function getMessagesWithUser($userId)
     {
         try {
+            $riderId = auth()->id();
+    
+            if (!$this->chatService->isRiderConnectedToUser($riderId, $userId)) {
+                return ResponseHelper::error("Access denied to this conversation.");
+            }
+    
             $messages = $this->chatService->getMessagesWithUser($userId);
             return ResponseHelper::success($messages, "Messages retrieved");
+        } catch (\Throwable $th) {
+            return ResponseHelper::error($th->getMessage());
+        }
+    }
+    
+    public function connectedUsers()
+    {
+        try {
+            $riderId = auth()->id();
+            $users = $this->chatService->getUsersConnectedToRider($riderId);
+            return ResponseHelper::success($users, "Connected users loaded");
         } catch (\Throwable $th) {
             return ResponseHelper::error($th->getMessage());
         }

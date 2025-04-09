@@ -38,7 +38,7 @@ class ChatService
     {
         return $this->chatRepository->delete($id);
     }
-       public function sendMessage(array $data)
+    public function sendMessage(array $data)
     {
         $data['sender_id'] = Auth::id();
         $data['sent_at'] = now();
@@ -54,4 +54,21 @@ class ChatService
     {
         return $this->chatRepository->getInboxByUser(Auth::id());
     }
+
+    public function isRiderConnectedToUser($riderId, $userId)
+    {
+        return \App\Models\SendParcel::where('rider_id', $riderId)
+            ->where('user_id', $userId)
+            ->exists();
+    }
+
+    public function getUsersConnectedToRider($riderId)
+    {
+        return \App\Models\User::whereIn('id', function ($query) use ($riderId) {
+            $query->select('user_id')
+                ->from('send_parcels')
+                ->where('rider_id', $riderId);
+        })->get(['id', 'name', 'email', 'phone']);
+    }
+
 }
