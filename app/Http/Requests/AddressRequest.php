@@ -23,11 +23,11 @@ class AddressRequest extends FormRequest
     public function rules(): array
     {
         return [
-          'state' =>'required',
-          'city' => 'required',
-          'address' => 'required',
-          'user_id' => 'required',
-          'type' => 'required'
+            'state' => 'required',
+            'city' => 'required',
+            'address' => 'required',
+            //   'user_id' => 'required',
+            'type' => 'required'
         ];
     }
     public function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)
