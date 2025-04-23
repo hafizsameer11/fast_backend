@@ -3,6 +3,7 @@
 namespace App\Repositories;
 
 use App\Models\User;
+use App\Models\Wallet;
 
 class UserRepository
 {
@@ -15,7 +16,14 @@ class UserRepository
     {
         // Add logic to find data by ID
     }
-
+    public function createUserWallet($userId)
+    {
+        $wallet = Wallet::create([
+            'user_id' => $userId,
+        ]);
+        return $wallet;
+        // Add logic to create a wallet for the user
+    }
     public function create(array $data)
     {
         if (isset($data["password"]) && $data["password"] != "") {
@@ -26,6 +34,7 @@ class UserRepository
             $data['profile_picture'] = $path;
         }
         $user = User::create($data);
+        $this->createUserWallet($user->id);
         return $user;
     }
 
@@ -40,11 +49,10 @@ class UserRepository
     }
     public function delete($id)
     {
-        // Add logic to delete data
+      
     }
     public function findByEmail($email)
     {
         return User::where('email', $email)->first();
     }
-    
 }

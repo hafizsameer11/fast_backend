@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Hash;
 use App\Mail\OtpMail;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
 class UserService
@@ -92,7 +93,7 @@ class UserService
 
         $user = $query->first();
 
-        if (!$user || !\Hash::check($data['password'], $user->password)) {
+        if (!$user || Hash::check($data['password'], $user->password)) {
             throw new \Exception('Invalid credentials.');
         }
 
@@ -118,7 +119,7 @@ class UserService
 
             return $user;
         } catch (\Exception $e) {
-            \Log::error('Resend OTP error: ' . $e->getMessage());
+            Log::error('Resend OTP error: ' . $e->getMessage());
             throw new \Exception('Resend OTP failed.');
         }
     }
@@ -138,7 +139,7 @@ class UserService
 
             return $user;
         } catch (\Exception $e) {
-            \Log::error('Forgot Password OTP Error: ' . $e->getMessage());
+            Log::error('Forgot Password OTP Error: ' . $e->getMessage());
             throw new \Exception('Could not send OTP.');
         }
     }
@@ -161,7 +162,7 @@ class UserService
 
             return $user;
         } catch (\Exception $e) {
-            \Log::error('Verify OTP Error: ' . $e->getMessage());
+            Log::error('Verify OTP Error: ' . $e->getMessage());
             throw new \Exception('OTP verification failed.');
         }
     }
@@ -179,7 +180,7 @@ class UserService
 
             return $user;
         } catch (\Exception $e) {
-            \Log::error('Password Reset Error: ' . $e->getMessage());
+            Log::error('Password Reset Error: ' . $e->getMessage());
             throw new \Exception('Could not reset password.');
         }
     }
@@ -195,5 +196,4 @@ class UserService
         $user->update($data);
         return $user;
     }
-
 }
