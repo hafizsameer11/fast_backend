@@ -70,5 +70,12 @@ class ChatService
                 ->where('rider_id', $riderId);
         })->get(['id', 'name', 'email', 'phone']);
     }
-
+    public function getRidersConnectedToUser($userId)
+    {
+        return \App\Models\User::whereIn('id', function ($query) use ($userId) {
+            $query->select('rider_id')
+                  ->from('send_parcels')
+                  ->where('user_id', $userId);
+        })->get(['id', 'name', 'email', 'phone']);
+    }
 }

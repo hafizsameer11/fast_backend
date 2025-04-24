@@ -9,7 +9,7 @@ class UserRepository
 {
     public function all()
     {
-        // Add logic to fetch all data
+
     }
 
     public function find($id)
@@ -47,10 +47,7 @@ class UserRepository
         $user->update($data);
         return $user;
     }
-    public function delete($id)
-    {
-      
-    }
+    public function delete($id) {}
     public function findByEmail($email)
     {
         return User::where('email', $email)->first();

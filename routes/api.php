@@ -101,7 +101,7 @@ Route::middleware('auth:sanctum')->prefix('address')->group(function () {
 
 
 Route::prefix('sendparcel')->middleware('auth:sanctum')->group(function () {
-    
+
     // Route::post('create', [SendParcelController::class, 'create']);
 
 
@@ -129,7 +129,7 @@ Route::prefix('sendparcel')->middleware('auth:sanctum')->group(function () {
 
 
 Route::prefix('parcel-bid')->middleware('auth:sanctum')->group(function () {
-    
+
     Route::post('create', [ParcelBidController::class, 'store']); // rider
 
 
@@ -168,6 +168,7 @@ Route::prefix('chat')->middleware('auth:sanctum')->group(function () {
     Route::get('messages/{userId}', [ChatController::class, 'getMessagesWithUser']);
     Route::get('inbox', [ChatController::class, 'inbox']);
     Route::get('connected-users', [ChatController::class, 'connectedUsers']); // 🔥 new
+    Route::get('connected-riders', [ChatController::class, 'connectRiders']); // 🔥 new
 
 
     // ✅ Support chat routes
