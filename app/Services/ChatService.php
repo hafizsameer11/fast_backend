@@ -68,7 +68,7 @@ class ChatService
             $query->select('user_id')
                 ->from('send_parcels')
                 ->where('rider_id', $riderId);
-        })->get(['id', 'name', 'email', 'phone']);
+        })->get(['id', 'name', 'email', 'phone','profile_picture']);
     }
     public function getRidersConnectedToUser($userId)
     {
@@ -76,6 +76,6 @@ class ChatService
             $query->select('rider_id')
                   ->from('send_parcels')
                   ->where('user_id', $userId);
-        })->get(['id', 'name', 'email', 'phone']);
+        })->get(['id', 'name', 'email', 'phone','profile_picture']);
     }
 }
