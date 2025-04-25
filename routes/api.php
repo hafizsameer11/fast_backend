@@ -200,5 +200,6 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('admin')->group(function () {
         Route::get('usermanagement', [UsermanagementController::class, 'getUserManagment']);
         Route::get('usermanagement/get-user-details/{userId}', [UsermanagementController::class, 'getUserDetails']);
+        Route::post('usermanagement/edit-user/{userId}', [UsermanagementController::class, 'editUser']);
     });
 });

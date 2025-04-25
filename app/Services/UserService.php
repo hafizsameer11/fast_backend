@@ -69,7 +69,7 @@ class UserService
     {
         return $this->UserRepository->update($id, $data);
     }
-
+    
     public function delete($id)
     {
         return $this->UserRepository->delete($id);
