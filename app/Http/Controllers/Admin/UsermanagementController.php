@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Services\UserService;
+use Exception;
 use Illuminate\Http\Request;
 
 class UsermanagementController extends Controller
@@ -28,8 +29,8 @@ class UsermanagementController extends Controller
         try {
             $userDetails = $this->userService->getUserDetails($userId);
             return ResponseHelper::success($userDetails);
-        } catch (\Exception $e) {
-            return ResponseHelper::error("User not found for $userId");
+        } catch (Exception $e) {
+            return ResponseHelper::error("User not found for $userId $e");
         }
     }
 }
