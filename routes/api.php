@@ -29,6 +29,7 @@ use Illuminate\Support\Facades\Route;
 | be assigned to the "api" middleware group. Make something great!
 |
 */
+
 Route::get('/optimize-app', function () {
     Artisan::call('optimize:clear');
     Artisan::call('cache:clear');
@@ -72,9 +73,6 @@ Route::prefix("auth/user")->group(function () {
     Route::post('/forget-password', [AuthController::class, 'forgotPassword']);
     Route::post('/verify-forget-password-otp', [AuthController::class, 'verifyForgetPasswordOtp']);
     Route::post('/reset-password', [AuthController::class, 'resetPassword']);
-
-
-
 });
 
 Route::prefix("auth/rider")->group(function () {
@@ -199,7 +197,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
 });
 Route::middleware('auth:sanctum')->group(function () {
-   Route::prefix('admin')->group(function () {
+    Route::prefix('admin')->group(function () {
         Route::get('usermanagement', [UsermanagementController::class, 'getUserManagment']);
+        Route::get('usermanagement/get-user-details/{userId}', [UsermanagementController::class, 'getUserDetails']);
     });
 });

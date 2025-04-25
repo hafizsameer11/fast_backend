@@ -51,16 +51,24 @@ class UserRepository
     }
     public function getUserManagement()
     {
-        $totalUsers= User::count();
-        $users= User::where('role', '!=', 'admin')->get();
+        $totalUsers = User::count();
+        $users = User::where('role', '!=', 'admin')->get();
         $activeUsers = User::where('is_active', 1)->count();
         $inactiveUsers = User::where('is_active', 0)->count();
-        $data= [
+        $data = [
             'total_users' => $totalUsers,
             'active_users' => $activeUsers,
             'inactive_users' => $inactiveUsers,
             'users' => $users,
         ];
-return $data;
+        return $data;
+    }
+    public function getUserDetails($id)
+    {
+        $user = User::find($id);
+        if (!$user) {
+            throw new \Exception("User not found.");
+        }
+        return $user->load('addresses', 'wallet', 'sentMessages', 'receivedMessages','sendParcel.bids.rider');
     }
 }

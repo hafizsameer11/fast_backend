@@ -52,7 +52,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(Withdrawal::class);
     }
-    
+    public function sendParcel()
+    {
+        return $this->hasMany(SendParcel::class, 'user_id');
+    }
 
     public function sentMessages()
     {
