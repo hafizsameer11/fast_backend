@@ -29,7 +29,7 @@ class UsermanagementController extends Controller
             $userDetails = $this->userService->getUserDetails($userId);
             return ResponseHelper::success($userDetails);
         } catch (\Exception $e) {
-            return ResponseHelper::error("User not found");
+            return ResponseHelper::error("User not found for $userId");
         }
     }
 }

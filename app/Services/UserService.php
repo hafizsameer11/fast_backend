@@ -31,7 +31,7 @@ class UserService
             $userDetails=$this->UserRepository->getUserDetails($userId);
             return $userDetails;
         }catch (\Exception $e){
-            throw new \Exception("User not found");
+            throw new \Exception("User not found for $userId    ");
         }
     }
     public function all()
