@@ -54,7 +54,7 @@ class User extends Authenticatable
     }
     public function sendParcel()
     {
-        return $this->hasMany(SendParcel::class, 'user_id');
+        return $this->hasMany(SendParcel::class);
     }
 
     public function sentMessages()
