@@ -4,6 +4,7 @@ namespace App\Repositories;
 
 use App\Models\User;
 use App\Models\Wallet;
+use Illuminate\Support\Facades\Log;
 
 class UserRepository
 {
@@ -65,10 +66,15 @@ class UserRepository
     }
     public function getUserDetails($userId)
     {
-       $user=User::where('id', $userId)->where('role', '!=', 'admin')->first();
+       $user=User::where('id', $userId)->where('role', '!=', value: 'admin')->first();
         if (!$user) {
+            Log::info("User not found for ID: $userId", [
+                'user_id' => $userId,
+                'timestamp' => now(),
+
+            ]);
             throw new \Exception("User not found. for id $userId");
         }
-        return $user->load('addresses', 'wallet', 'sentMessages', 'receivedMessages','sendParcel.bids.rider');
+        return $user;
     }
 }
