@@ -66,7 +66,7 @@ class UserRepository
     }
     public function getUserDetails($userId)
     {
-       $user=User::where('id', $userId)->where('role', '!=', value: 'admin')->with('wallet','sendParcel.bids','addresses')->first();
+       $user=User::where('id', $userId)->where('role', '!=', value: 'admin')->with('wallet','sendParcel','addresses')->first();
         if (!$user) {
             Log::info("User not found for ID: $userId", [
                 'user_id' => $userId,
