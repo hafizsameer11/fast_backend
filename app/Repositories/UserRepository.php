@@ -65,7 +65,7 @@ class UserRepository
     }
     public function getUserDetails($userId)
     {
-        $user = User::find($userId);
+       $user=User::where('id', $userId)->where('role', '!=', 'admin')->first();
         if (!$user) {
             throw new \Exception("User not found. for id $userId");
         }
