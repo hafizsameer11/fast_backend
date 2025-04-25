@@ -63,11 +63,11 @@ class UserRepository
         ];
         return $data;
     }
-    public function getUserDetails($id)
+    public function getUserDetails($userId)
     {
-        $user = User::find($id);
+        $user = User::find($userId);
         if (!$user) {
-            throw new \Exception("User not found.");
+            throw new \Exception("User not found. for id $userId");
         }
         return $user->load('addresses', 'wallet', 'sentMessages', 'receivedMessages','sendParcel.bids.rider');
     }

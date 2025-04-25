@@ -26,9 +26,9 @@ class UserService
             throw new \Exception("User not found");
         }
     }
-    public function getUserDetails($id){
+    public function getUserDetails($userId){
         try{
-            $userDetails=$this->UserRepository->getUserDetails($id);
+            $userDetails=$this->UserRepository->getUserDetails($userId);
             return $userDetails;
         }catch (\Exception $e){
             throw new \Exception("User not found");
