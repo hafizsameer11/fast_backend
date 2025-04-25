@@ -7,10 +7,7 @@ use App\Models\Wallet;
 
 class UserRepository
 {
-    public function all()
-    {
-
-    }
+    public function all() {}
 
     public function find($id)
     {
@@ -51,5 +48,19 @@ class UserRepository
     public function findByEmail($email)
     {
         return User::where('email', $email)->first();
+    }
+    public function getUserManagement()
+    {
+        $totalUsers= User::count();
+        $users= User::where('role', '!=', 'admin')->get();
+        $activeUsers = User::where('is_active', 1)->count();
+        $inactiveUsers = User::where('is_active', 0)->count();
+        $data= [
+            'total_users' => $totalUsers,
+            'active_users' => $activeUsers,
+            'inactive_users' => $inactiveUsers,
+            'users' => $users,
+        ];
+return $data;
     }
 }

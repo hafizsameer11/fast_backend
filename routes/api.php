@@ -2,6 +2,7 @@
 
 // use App\Http\Controllers\Rider\AuthController;
 
+use App\Http\Controllers\Admin\UsermanagementController;
 use App\Http\Controllers\Api\HistoryController;
 use App\Http\Controllers\ParcelBidController;
 use App\Http\Controllers\ParcelReviewController;
@@ -15,6 +16,7 @@ use App\Http\Controllers\User\ChatController;
 use App\Http\Controllers\User\FaqController;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -195,4 +197,9 @@ Route::prefix('faqs')->middleware('auth:sanctum')->group(function () {
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+Route::middleware('auth:sanctum')->group(function () {
+   Route::prefix('admin')->group(function () {
+        Route::get('usermanagement', [UsermanagementController::class, 'getUserManagment']);
+    });
 });

@@ -17,10 +17,12 @@ class UserService
     {
         $this->UserRepository = $UserRepository;
     }
-    public function usermanagement(){
-        try{
-
-        }catch(\Exception $e){
+    public function usermanagement()
+    {
+        try {
+            $data = $this->UserRepository->getUserManagement();
+            return $data;
+        } catch (\Exception $e) {
             throw new \Exception("User not found");
         }
     }
