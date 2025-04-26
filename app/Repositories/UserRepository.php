@@ -42,6 +42,10 @@ class UserRepository
         if (!$user) {
             throw new \Exception("User not found.");
         }
+        if (isset($data['profile_picture']) && $data['profile_picture']) {
+            $path = $data['profile_picture']->store('profile_picture', 'public');
+            $data['profile_picture'] = $path;
+        }
         $user->update($data);
         return $user;
     }
