@@ -31,7 +31,7 @@ class ChatController extends Controller
             if (!$this->chatService->isRiderConnectedToUser($riderId, $recipientId)) {
                 return ResponseHelper::error("You are not allowed to chat with this user.");
             }
-            if($recipientId == $riderId) {
+            if ($recipientId == $riderId) {
                 return ResponseHelper::error("You cannot send a message to yourself.");
             }
             $chat = $this->chatService->sendMessage($request->validated());

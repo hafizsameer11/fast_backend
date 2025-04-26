@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EditProfileRequest;
+use App\Services\ChatService;
 use App\Services\SendParcelService;
 use App\Services\UserService;
 use Exception;
@@ -12,11 +13,15 @@ use Illuminate\Http\Request;
 
 class UsermanagementController extends Controller
 {
-    protected $userService, $sendParcelService;
-    public function __construct(UserService $userService, SendParcelService $sendParcelService)
-    {
+    protected $userService, $sendParcelService, $chatService;
+    public function __construct(
+        UserService $userService,
+        SendParcelService $sendParcelService,
+        ChatService $chatService
+    ) {
         $this->userService = $userService;
         $this->sendParcelService = $sendParcelService;
+        $this->chatService = $chatService;
     }
     public function getUserManagment()
     {
@@ -63,6 +68,24 @@ class UsermanagementController extends Controller
             return ResponseHelper::success($data);
         } catch (Exception $e) {
             return ResponseHelper::error("Parcel not found for $parcelId");
+        }
+    }
+    public function getUserChats($userId)
+    {
+        try {
+            $data = $this->chatService->getRidersConnectedToUser($userId);
+            return ResponseHelper::success($data);
+        } catch (Exception $e) {
+            return ResponseHelper::error("User not found for $userId");
+        }
+    }
+    public function getConversationBetweenUsers($userId, $receiverId)
+    {
+        try {
+            $data = $this->chatService->getConversationBetweenUsers($userId, $receiverId);
+            return ResponseHelper::success($data);
+        } catch (Exception $e) {
+            return ResponseHelper::error("User not found for $userId");
         }
     }
 }

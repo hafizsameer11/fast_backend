@@ -11,6 +11,19 @@ class ChatRepository
     {
         return Chat::create($data);
     }
+    public function getConversationBetweenUsers($userId, $receiverId)
+    {
+        return Chat::where(function ($query) use ($userId, $receiverId) {
+                $query->where('sender_id', $userId)
+                      ->where('receiver_id', $receiverId);
+            })
+            ->orWhere(function ($query) use ($userId, $receiverId) {
+                $query->where('sender_id', $receiverId)
+                      ->where('receiver_id', $userId);
+            })
+            ->orderBy('sent_at')
+            ->get();
+    }
 
     public function getConversationWithUser($otherUserId, $authUserId)
     {

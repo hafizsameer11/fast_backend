@@ -85,4 +85,8 @@ class ChatService
                   ->where('user_id', $userId);
         })->get(['id', 'name', 'email', 'phone','profile_picture']);
     }
+    public function getConversationBetweenUsers($userId, $receiverId)
+    {
+        return $this->chatRepository->getConversationBetweenUsers($userId, $receiverId);
+    }
 }

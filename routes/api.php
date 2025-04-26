@@ -201,5 +201,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('usermanagement', [UsermanagementController::class, 'getUserManagment']);
         Route::get('usermanagement/get-user-details/{userId}', [UsermanagementController::class, 'getUserDetails']);
         Route::post('usermanagement/edit-user/{userId}', [UsermanagementController::class, 'editUser']);
+        Route::get('usermanagement/get-parcel-for-user/{userId}', [UsermanagementController::class, 'getParcelForUser']);
+        Route::get('usermanagement/get-parcel-details/{parcelId}', [UsermanagementController::class, 'getParcelDetails']);
+        Route::get('usermanagement/get-user-chats/{userId}', [UsermanagementController::class, 'getUserChats']);
+        Route::get('usermanagement/get-conversation-between-users/{userId}/{receiverId}', [UsermanagementController::class, 'getConversationBetweenUsers']);
     });
 });
