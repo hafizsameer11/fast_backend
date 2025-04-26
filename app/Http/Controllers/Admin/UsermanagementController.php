@@ -5,16 +5,18 @@ namespace App\Http\Controllers\Admin;
 use App\Helpers\ResponseHelper;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\EditProfileRequest;
+use App\Services\SendParcelService;
 use App\Services\UserService;
 use Exception;
 use Illuminate\Http\Request;
 
 class UsermanagementController extends Controller
 {
-    protected $userService;
-    public function __construct(UserService $userService)
+    protected $userService, $sendParcelService;
+    public function __construct(UserService $userService, SendParcelService $sendParcelService)
     {
         $this->userService = $userService;
+        $this->sendParcelService = $sendParcelService;
     }
     public function getUserManagment()
     {
@@ -42,6 +44,25 @@ class UsermanagementController extends Controller
             return ResponseHelper::success($data);
         } catch (Exception $e) {
             return ResponseHelper::error("User not found for $userId");
+        }
+    }
+    public function getParcelForUser($userId)
+    {
+        try {
+            $data = $this->sendParcelService->getParcelForUser($userId);
+            // $data = $this->userService->getParcelForUser($userId);
+            return ResponseHelper::success($data);
+        } catch (Exception $e) {
+            return ResponseHelper::error("User not found for $userId");
+        }
+    }
+    public function getParcelDetails($parcelId)
+    {
+        try {
+            $data = $this->sendParcelService->find($parcelId);
+            return ResponseHelper::success($data);
+        } catch (Exception $e) {
+            return ResponseHelper::error("Parcel not found for $parcelId");
         }
     }
 }

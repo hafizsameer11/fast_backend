@@ -57,10 +57,17 @@ class ChatService
 
     public function isRiderConnectedToUser($riderId, $userId)
     {
-        return \App\Models\SendParcel::where('rider_id', $riderId)
-            ->where('user_id', $userId)
+        return \App\Models\SendParcel::where(function ($query) use ($riderId, $userId) {
+                $query->where('rider_id', $riderId)
+                      ->where('user_id', $userId);
+            })
+            ->orWhere(function ($query) use ($riderId, $userId) {
+                $query->where('rider_id', $userId)
+                      ->where('user_id', $riderId);
+            })
             ->exists();
     }
+
 
     public function getUsersConnectedToRider($riderId)
     {

@@ -1,6 +1,7 @@
 <?php
 
 namespace App\Repositories;
+
 use App\Models\SendParcel;
 
 class SendParcelRepository
@@ -55,5 +56,8 @@ class SendParcelRepository
         $parcel->save();
         return $parcel;
     }
-
+    public function getParcelForUser($userId)
+    {
+        return SendParcel::where('user_id', $userId)->get();
+    }
 }
