@@ -13,7 +13,7 @@ class SendParcelRepository
 
     public function find($id)
     {
-        return SendParcel::with('acceptedBid', 'bids')->find($id)?->fresh(); // ensures latest data
+        return SendParcel::with('acceptedBid.rider', 'bids')->find($id)?->fresh(); // ensures latest data
     }
 
     public function create(array $data)
