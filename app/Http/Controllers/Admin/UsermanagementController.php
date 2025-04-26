@@ -61,7 +61,7 @@ class UsermanagementController extends Controller
             return ResponseHelper::error("User not found for $userId");
         }
     }
-    public function getParcelDetails($parcelId)
+    public function   getParcelDetails($parcelId)
     {
         try {
             $data = $this->sendParcelService->find($parcelId);
