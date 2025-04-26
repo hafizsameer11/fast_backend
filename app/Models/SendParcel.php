@@ -55,7 +55,10 @@ class SendParcel extends Model
     {
         return $this->hasMany(ParcelBid::class);
     }
-
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
     public function acceptedBid()
     {
         return $this->belongsTo(ParcelBid::class, 'accepted_bid_id');
