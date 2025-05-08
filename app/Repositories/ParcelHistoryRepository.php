@@ -21,7 +21,7 @@ class ParcelHistoryRepository
 
     public function getUserScheduledParcels($userId)
     {
-        return SendParcel::where('user_id', $userId)
+        return SendParcel::where('user_id', $userId)->with('acceptedBid.rider')
             ->where('is_assigned', false)
             ->latest()->get();
     }
