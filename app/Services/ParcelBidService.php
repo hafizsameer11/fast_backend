@@ -16,8 +16,10 @@ class ParcelBidService
 
     public function createBid(array $data)
     {
+        \Log::info('Creating Rider Bid:', $data);
         return $this->repo->create($data);
     }
+
 
     public function getParcelBids($parcelId)
     {
@@ -71,4 +73,10 @@ class ParcelBidService
 
         return $parcel->load('acceptedBid', 'bids');
     }
+    public function getBid($bidId)
+    {
+        return $this->repo->find($bidId);
+    }
+
+
 }

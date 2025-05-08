@@ -9,11 +9,11 @@ class ParcelBidRepository
     {
         // Add logic to fetch all data
     }
-
     public function find($id)
     {
-        // Add logic to find data by ID
+        return ParcelBid::with('parcel')->findOrFail($id);
     }
+
 
     public function create(array $data)
     {
@@ -31,9 +31,10 @@ class ParcelBidRepository
     }
     public function getBidsForParcel($parcelId)
     {
-        return ParcelBid::where('send_parcel_id', $parcelId)->with('rider')->get();
+        return ParcelBid::with(['rider', 'user']) // ✅ Load both sides
+            ->where('send_parcel_id', $parcelId)
+            ->get();
     }
-
     public function acceptBid($bidId)
     {
         $bid = ParcelBid::findOrFail($bidId);
