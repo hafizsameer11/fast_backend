@@ -28,7 +28,7 @@ class ParcelHistoryRepository
 
     public function getUserActiveParcels($userId)
     {
-        return SendParcel::where('user_id', $userId)
+        return SendParcel::where('user_id', $userId)->with('acceptedBid.rider')
             ->where('is_assigned', true)
             ->whereNotIn('status', ['delivered'])
             ->latest()->get();
@@ -36,7 +36,7 @@ class ParcelHistoryRepository
 
     public function getUserDeliveredParcels($userId)
     {
-        return SendParcel::where('user_id', $userId)
+        return SendParcel::where('user_id', $userId)->with('acceptedBid.rider')
             ->where('status', 'delivered')
             ->latest()->get();
     }
