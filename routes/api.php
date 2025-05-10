@@ -18,7 +18,7 @@ use App\Http\Controllers\User\SendParcelController;
 use App\Http\Controllers\User\WithdrawalController;
 use App\Http\Controllers\User\ChatController;
 use App\Http\Controllers\User\FaqController;
-
+use App\Http\Controllers\WalletController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Route;
@@ -102,10 +102,7 @@ Route::middleware('auth:sanctum')->prefix('address')->group(function () {
     Route::put('update/{id}', [AddressController::class, 'update']);
     Route::delete('delete/{id}', [AddressController::class, 'destroy']);
 });
-
-
 Route::prefix('sendparcel')->middleware('auth:sanctum')->group(function () {
-
     Route::post('create-step-one', [SendParcelController::class, 'createStepOne']);
     Route::post('{id}/step-two', [SendParcelController::class, 'stepTwo']);
     Route::post('{id}/step-three', [SendParcelController::class, 'stepThree']);
@@ -117,20 +114,12 @@ Route::prefix('sendparcel')->middleware('auth:sanctum')->group(function () {
     Route::post('{id}/cancel', [SendParcelController::class, 'cancelParcel']);
 });
 
-
 Route::prefix('parcel-bid')->middleware('auth:sanctum')->group(function () {
-
     Route::post('create', [ParcelBidController::class, 'store']); // rider
-
-
     Route::post('create-by-user', [ParcelBidController::class, 'storeByUser']); // user
-
     Route::get('{parcelId}/list', [ParcelBidController::class, 'list']); // both
-
     Route::put('accept/{bidId}', [ParcelBidController::class, 'accept']); // user accepts rider bid
-
     Route::put('rider-accept/{bidId}', [ParcelBidController::class, 'riderAccept']); // rider accepts user bid
-
 });
 
 Route::prefix('rider/location')->middleware('auth:sanctum')->group(function () {
@@ -142,7 +131,6 @@ Route::post('rider/check-proximity', [DistanceController::class, 'check']);
 Route::middleware('auth:sanctum')->prefix('rider')->group(function () {
     Route::post('nearby-parcels', [NearbyParcelController::class, 'index']);
 });
-
 Route::middleware('auth:sanctum')->prefix('track')->group(function () {
     Route::get('user/{parcelId}', [TrackController::class, 'userViewRiderLocation']);
     Route::get('rider/route/{parcelId}', [TrackController::class, 'riderRouteToDelivery']);
@@ -152,20 +140,14 @@ Route::prefix('parcel-review')->middleware('auth:sanctum')->group(function () {
     Route::post('submit', [ParcelReviewController::class, 'submit']);
 });
 
-
-
 Route::middleware('auth:sanctum')->prefix('sendparcel')->group(function () {
     Route::post('{id}/update-location', [SendParcelController::class, 'updateLocation']);
 });
-
-
 
 Route::middleware('auth:sanctum')->prefix('history')->group(function () {
     Route::get('rider', [HistoryController::class, 'riderHistory']);
     Route::get('user', [HistoryController::class, 'userHistory']);
 });
-
-
 Route::prefix('withdrawal')->group(function () {
     Route::post('store', [WithdrawalController::class, 'store']);
     Route::get('list', [WithdrawalController::class, 'index']);
@@ -204,6 +186,14 @@ Route::prefix('faqs')->middleware('auth:sanctum')->group(function () {
 
 Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
     return $request->user();
+});
+Route::middleware('auth:sanctum')->prefix('wallet')->group(function () {
+
+    Route::post('/add-payment', [WalletController::class, 'madePayment']);
+    Route::get('/balance', [WalletController::class, 'getWalletBalance']);
+    Route::get('/transactions', [WalletController::class, 'getTransactionHistory']);
+    Route::get('/virtual-account', [WalletController::class, 'getVirtualAccount']);
+    Route::post('/virtual-account/generate', [WalletController::class, 'generateVirtualAccount']);
 });
 Route::middleware('auth:sanctum')->group(function () {
     Route::prefix('admin')->group(function () {

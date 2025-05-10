@@ -17,12 +17,12 @@ class WithdrawalService
 
     public function all()
     {
-        return $this->WithdrawalRepository->all();
+        return $this->withdrawalRepository->all();
     }
 
     public function find($id)
     {
-        return $this->WithdrawalRepository->find($id);
+        return $this->withdrawalRepository->find($id);
     }
 
     public function create(array $data)
