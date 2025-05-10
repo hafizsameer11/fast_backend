@@ -43,6 +43,8 @@ class WalletRepository
         $transaction->transaction_type = 'topup';
         $transaction->status = 'completed';
         $transaction->reference = 'Payment_' . time();
+        $transaction->save();
+        return $transaction;
     }
     public function getWalletBalance($userId)
     {
