@@ -44,7 +44,7 @@ class SendParcelRepository
             }
         }
 
-        return response()->json($filteredParcels);
+        return $filteredParcels;
     }
 
     public function find($id)
