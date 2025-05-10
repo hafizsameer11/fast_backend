@@ -75,7 +75,7 @@ class SendParcelController extends Controller
     public function index()
     {
         try {
-            $parcels = $this->sendParcelService->all()->map(fn($p) => $p->fresh());
+            $parcels = $this->sendParcelService->all();
             return ResponseHelper::success($parcels, "Parcel list retrieved successfully");
         } catch (\Throwable $th) {
             $status = $th->getCode() >= 100 && $th->getCode() <= 599 ? $th->getCode() : 500;
