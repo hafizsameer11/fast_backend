@@ -29,16 +29,23 @@ class SendParcelRepository
         $parcels = SendParcel::with('user')->where('is_assigned', false)->latest()->get();
 
         foreach ($parcels as $parcel) {
-            $senderLocation = $parcel->sender_address;
+            $senderRaw = $parcel->sender_address;
+            $receiverRaw = $parcel->receiver_address;
 
-            // Convert to lat/lng if needed
-            $resolvedSender = $this->geoService->geocodeToLatLng($senderLocation);
-            
-            if ($resolvedSender) {
-                $distance = $this->geoService->getRoadDistance($riderLocation, $resolvedSender);
+            $resolvedSender = $this->geoService->geocodeToLatLng($senderRaw);
+            $resolvedReceiver = $this->geoService->geocodeToLatLng($receiverRaw);
 
-                if ($distance !== null && $distance <= $radius) {
-                    $parcel->road_distance_km = round($distance, 2);
+            if ($resolvedSender && $resolvedReceiver) {
+                $toSender = $this->geoService->getRoadMetrics($riderLocation, $resolvedSender);
+                $toReceiver = $this->geoService->getRoadMetrics($resolvedSender, $resolvedReceiver);
+
+                if ($toSender && $toSender['distance_km'] <= $radius) {
+                    $parcel->distance_to_sender_km = round($toSender['distance_km'], 2);
+                    $parcel->eta_to_sender_min = $toSender['duration_min'];
+
+                    $parcel->distance_to_receiver_km = round($toReceiver['distance_km'], 2);
+                    $parcel->eta_to_receiver_min = $toReceiver['duration_min'];
+
                     $filteredParcels[] = $parcel;
                 }
             }
@@ -46,6 +53,7 @@ class SendParcelRepository
 
         return $filteredParcels;
     }
+
 
     public function find($id)
     {
