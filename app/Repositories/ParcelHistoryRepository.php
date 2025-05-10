@@ -10,11 +10,13 @@ class ParcelHistoryRepository
     {
         if ($type === 'active') {
             return SendParcel::where('rider_id', $riderId)
+            ->with('user')
                 ->whereNotIn('status', ['delivered'])
                 ->latest()->get();
         }
 
         return SendParcel::where('rider_id', $riderId)
+        ->with('user')
             ->where('status', 'delivered')
             ->latest()->get();
     }
