@@ -15,9 +15,9 @@ class SendParcelService
         $this->sendParcelRepository = $sendParcelRepository;
     }
 
-    public function all()
+    public function all($latitude, $longitude)
     {
-        return $this->sendParcelRepository->all();
+        return $this->sendParcelRepository->all($latitude, $longitude);
     }
 
     public function find($id)

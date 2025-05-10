@@ -3,12 +3,48 @@
 namespace App\Repositories;
 
 use App\Models\SendParcel;
+use App\Services\GeoService;
 
 class SendParcelRepository
 {
-    public function all()
+    private $geoService;
+    public function __construct(GeoService $geoService)
     {
-        return SendParcel::with('user')->where('is_assigned', false)->latest()->get();
+        $this->geoService = $geoService;
+    }
+
+    public function all($latitude, $longitude)
+    {
+        $riderLat = $latitude;
+        $riderLng = $longitude;
+        $radius = 100; // in KM
+
+        if (!$riderLat || !$riderLng) {
+            return response()->json(['error' => 'Missing rider coordinates'], 422);
+        }
+
+        $riderLocation = ['lat' => $riderLat, 'lng' => $riderLng];
+        $filteredParcels = [];
+
+        $parcels = SendParcel::with('user')->where('is_assigned', false)->latest()->get();
+
+        foreach ($parcels as $parcel) {
+            $senderLocation = $parcel->sender_address;
+
+            // Convert to lat/lng if needed
+            $resolvedSender = $this->geoService->geocodeToLatLng($senderLocation);
+
+            if ($resolvedSender) {
+                $distance = $this->geoService->getRoadDistance($riderLocation, $resolvedSender);
+
+                if ($distance !== null && $distance <= $radius) {
+                    $parcel->road_distance_km = round($distance, 2);
+                    $filteredParcels[] = $parcel;
+                }
+            }
+        }
+
+        return response()->json($filteredParcels);
     }
 
     public function find($id)
@@ -58,6 +94,6 @@ class SendParcelRepository
     }
     public function getParcelForUser($userId)
     {
-        return SendParcel::where('user_id', $userId)->with('acceptedBid.rider','user')->get();
+        return SendParcel::where('user_id', $userId)->with('acceptedBid.rider', 'user')->get();
     }
 }
