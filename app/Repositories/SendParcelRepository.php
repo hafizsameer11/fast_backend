@@ -33,7 +33,7 @@ class SendParcelRepository
 
             // Convert to lat/lng if needed
             $resolvedSender = $this->geoService->geocodeToLatLng($senderLocation);
-
+            
             if ($resolvedSender) {
                 $distance = $this->geoService->getRoadDistance($riderLocation, $resolvedSender);
 

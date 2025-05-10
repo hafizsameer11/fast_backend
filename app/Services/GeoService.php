@@ -4,6 +4,7 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class GeoService
 {
@@ -25,7 +26,7 @@ class GeoService
             'address' => $location,
             'key' => $this->apiKey
         ]);
-
+        Log::info("Geocode response: ", $res->json());
         if ($res->ok() && isset($res['results'][0]['geometry']['location'])) {
             return $res['results'][0]['geometry']['location'];
         }
@@ -44,7 +45,7 @@ class GeoService
             'key' => $this->apiKey,
             'units' => 'metric'
         ]);
-
+        Log::info("Distance Matrix response: ", $response->json());
         if (
             $response->ok() &&
             isset($response['rows'][0]['elements'][0]['status']) &&
