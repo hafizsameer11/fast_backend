@@ -30,7 +30,7 @@ class ParcelBidController extends Controller
     public function list($parcelId)
     {
         $riderId = auth()->id();
-        $bids=$this->service->getParcelBids($parcelId);
+        $bids = $this->service->getParcelBids($parcelId);
 
         return ResponseHelper::success($bids, "Nearby bids retrieved");
     }
@@ -78,5 +78,4 @@ class ParcelBidController extends Controller
         $updated = $this->service->acceptUserBid($bidId);
         return ResponseHelper::success($updated, "User bid accepted & parcel assigned to rider");
     }
-
 }

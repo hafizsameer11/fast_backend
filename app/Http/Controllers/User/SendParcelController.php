@@ -77,7 +77,7 @@ class SendParcelController extends Controller
         try {
             $rider_lat = $request->input('latitude');
             $rider_lng = $request->input('longitude');
-            $parcels = $this->sendParcelService->all( $rider_lat, $rider_lng);
+            $parcels = $this->sendParcelService->all($rider_lat, $rider_lng);
             return ResponseHelper::success($parcels, "Parcel list retrieved successfully");
         } catch (\Throwable $th) {
             $status = $th->getCode() >= 100 && $th->getCode() <= 599 ? $th->getCode() : 500;

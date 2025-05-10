@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class SendParcel extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
     protected $fillable = [
         'user_id',
         'total_amount',
@@ -47,8 +48,6 @@ class SendParcel extends Model
         'picked_up_at' => 'datetime',
         'in_transit_at' => 'datetime',
         'delivered_at' => 'datetime',
-        // 'is_delivery_confirmed' => 'boolean',
-        // 'is_pickup_confirmed' => 'boolean',
     ];
 
     public function bids()
