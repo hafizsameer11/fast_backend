@@ -7,6 +7,7 @@ use App\Http\Controllers\Api\HistoryController;
 use App\Http\Controllers\ParcelBidController;
 use App\Http\Controllers\ParcelReviewController;
 use App\Http\Controllers\Rider\RiderVerificationController;
+use App\Http\Controllers\TrackController;
 use App\Http\Controllers\User\AuthController;
 use App\Http\Controllers\Rider\AuthController as RiderAuthController;
 use App\Http\Controllers\User\AddressController;
@@ -143,13 +144,31 @@ Route::prefix('parcel-bid')->middleware('auth:sanctum')->group(function () {
 
 });
 
-Route::middleware('auth:sanctum')->prefix('sendparcel')->group(function () {
-    Route::post('{id}/update-location', [SendParcelController::class, 'updateLocation']);
+Route::prefix('rider/location')->middleware('auth:sanctum')->group(function () {
+    Route::post('update', [\App\Http\Controllers\Rider\RiderLocationController::class, 'updateLocation']);
+    Route::get('{riderId}', [\App\Http\Controllers\Rider\RiderLocationController::class, 'getRiderLocation']);
+});
+Route::post('rider/check-proximity', [\App\Http\Controllers\Rider\DistanceController::class, 'check']);
+
+Route::middleware('auth:sanctum')->prefix('rider')->group(function () {
+    Route::post('nearby-parcels', [\App\Http\Controllers\Rider\NearbyParcelController::class, 'index']);
+});
+
+Route::middleware('auth:sanctum')->prefix('track')->group(function () {
+    Route::get('user/{parcelId}', [TrackController::class, 'userViewRiderLocation']);
+    Route::get('rider/route/{parcelId}', [TrackController::class, 'riderRouteToDelivery']);
 });
 
 Route::prefix('parcel-review')->middleware('auth:sanctum')->group(function () {
     Route::post('submit', [ParcelReviewController::class, 'submit']);
 });
+
+
+
+Route::middleware('auth:sanctum')->prefix('sendparcel')->group(function () {
+    Route::post('{id}/update-location', [SendParcelController::class, 'updateLocation']);
+});
+
 
 Route::middleware('auth:sanctum')->prefix('history')->group(function () {
     Route::get('rider', [HistoryController::class, 'riderHistory']);

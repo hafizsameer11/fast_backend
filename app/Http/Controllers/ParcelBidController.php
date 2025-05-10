@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Controllers\Controller;
+use App\Models\RiderLocation;
 use Illuminate\Http\Request;
 use App\Services\ParcelBidService;
 use App\Helpers\ResponseHelper;
@@ -28,11 +29,23 @@ class ParcelBidController extends Controller
     }
     public function list($parcelId)
     {
-        $bids = $this->service->getParcelBids($parcelId);
-
+        $riderId = auth()->id();
+        $location = RiderLocation::where('rider_id', $riderId)->first();
+    
+        if (!$location) {
+            return ResponseHelper::error("Rider location not found", 404);
+        }
+    
+        $bids = $this->service->getParcelBidsWithinRange(
+            $parcelId,
+            $location->latitude,
+            $location->longitude,
+            10 // KM radius
+        );
+    
         $transformed = $bids->map(function ($bid) {
             $bidder = $bid->created_by === 'rider' ? $bid->rider : $bid->user;
-
+    
             return [
                 'id' => $bid->id,
                 'send_parcel_id' => $bid->send_parcel_id,
@@ -52,10 +65,9 @@ class ParcelBidController extends Controller
                 ] : null
             ];
         });
-
-        return ResponseHelper::success($transformed, "Bids retrieved");
+    
+        return ResponseHelper::success($transformed, "Nearby bids retrieved");
     }
-
 
     public function accept($bidId)
     {
