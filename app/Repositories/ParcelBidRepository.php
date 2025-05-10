@@ -34,7 +34,7 @@ class ParcelBidRepository
 {
     $bids = ParcelBid::with(['rider', 'user'])
         ->where('send_parcel_id', $parcelId)
-        ->whereColumn('created_by', 'rider_id') // ✅ only where created_by == rider_id
+        ->whereColumn('created_by', 'rider') // ✅ only where created_by == rider_id
         ->get();
 
     $parcel = SendParcel::where('id', $parcelId)
