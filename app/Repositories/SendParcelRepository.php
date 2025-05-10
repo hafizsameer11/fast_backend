@@ -2,8 +2,10 @@
 
 namespace App\Repositories;
 
+use App\Models\RiderLocation;
 use App\Models\SendParcel;
 use App\Services\GeoService;
+use Illuminate\Support\Facades\Auth;
 
 class SendParcelRepository
 {
@@ -15,6 +17,12 @@ class SendParcelRepository
 
     public function all($latitude, $longitude)
     {
+        $user=Auth::user();
+        $riderLocation=new RiderLocation();
+        $riderLocation->rider_id=$user->id;
+        $riderLocation->latitude=$latitude;
+        $riderLocation->longitude=$longitude;
+        $riderLocation->save();
         $riderLat = $latitude;
         $riderLng = $longitude;
         $radius = 100; // in KM

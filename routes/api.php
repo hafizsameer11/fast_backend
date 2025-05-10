@@ -106,27 +106,12 @@ Route::middleware('auth:sanctum')->prefix('address')->group(function () {
 
 Route::prefix('sendparcel')->middleware('auth:sanctum')->group(function () {
 
-    // Route::post('create', [SendParcelController::class, 'create']);
-
-
-    // STEP 1: Create Parcel Shell with sender/receiver addresses and schedule
     Route::post('create-step-one', [SendParcelController::class, 'createStepOne']);
-
-    // STEP 2: Add Contact Info (names, phones)
     Route::post('{id}/step-two', [SendParcelController::class, 'stepTwo']);
-
-    // STEP 3: Add Parcel Info (item details)
     Route::post('{id}/step-three', [SendParcelController::class, 'stepThree']);
-
-    // STEP 4: Final Step (Payment details + finalize)
     Route::post('{id}/step-four', [SendParcelController::class, 'stepFour']);
-
-
-
     Route::get('list', action: [SendParcelController::class, 'index']);
-
     Route::put('{id}/status', [SendParcelController::class, 'updateStatus']); // ✅ new route
-
     Route::post('{id}/confirm-pickup', [SendParcelController::class, 'confirmPickup']);
     Route::post('{id}/confirm-delivery', [SendParcelController::class, 'confirmDelivery']);
 });
@@ -171,6 +156,7 @@ Route::prefix('parcel-review')->middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->prefix('sendparcel')->group(function () {
     Route::post('{id}/update-location', [SendParcelController::class, 'updateLocation']);
 });
+
 
 
 Route::middleware('auth:sanctum')->prefix('history')->group(function () {

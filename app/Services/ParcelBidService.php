@@ -2,16 +2,19 @@
 
 namespace App\Services;
 
+use App\Models\RiderLocation;
 use App\Repositories\ParcelBidRepository;
 use App\Models\SendParcel;
 use Illuminate\Support\Facades\Http;
 
 class ParcelBidService
 {
-    protected $repo;
+    protected $repo, $geoService;
 
-    public function __construct(ParcelBidRepository $repo)
+    public function __construct(ParcelBidRepository $repo, GeoService $geoService)
+
     {
+        $this->geoService = $geoService;
         $this->repo = $repo;
     }
 
@@ -53,6 +56,16 @@ class ParcelBidService
         if (!$parcel->delivery_code) {
             $parcel->delivery_code = rand(1000, 9999);
         }
+        $riderLocation = RiderLocation::where('rider_id', $bid->rider_id)->first();
+        //check if rider location is not null
+        if ($riderLocation) {
+            $start_location = $this->geoService->reverseGeocode($riderLocation->latitude, $riderLocation->longitude);
+
+            if ($start_location) {
+                $parcel->rider_start_location = $start_location;
+            }
+        }
+
 
         $parcel->save();
         $this->repo->rejectOtherBids($parcel->id, $bid->id);
@@ -127,7 +140,7 @@ class ParcelBidService
             'address' => $address,
             'key' => env('GOOGLE_MAPS_API_KEY')
         ]);
-    
+
         $json = $response->json();
         return $json['results'][0]['geometry']['location'] ?? null;
     }
