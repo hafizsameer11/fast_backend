@@ -30,43 +30,9 @@ class ParcelBidController extends Controller
     public function list($parcelId)
     {
         $riderId = auth()->id();
-        $location = RiderLocation::where('rider_id', $riderId)->first();
-    
-        if (!$location) {
-            return ResponseHelper::error("Rider location not found", 404);
-        }
-    
-        $bids = $this->service->getParcelBidsWithinRange(
-            $parcelId,
-            $location->latitude,
-            $location->longitude,
-            10 // KM radius
-        );
-    
-        $transformed = $bids->map(function ($bid) {
-            $bidder = $bid->created_by === 'rider' ? $bid->rider : $bid->user;
-    
-            return [
-                'id' => $bid->id,
-                'send_parcel_id' => $bid->send_parcel_id,
-                'bid_amount' => $bid->bid_amount,
-                'message' => $bid->message,
-                'status' => $bid->status,
-                'created_by' => $bid->created_by,
-                'created_at' => $bid->created_at,
-                'updated_at' => $bid->updated_at,
-                'bidder' => $bidder ? [
-                    'id' => $bidder->id,
-                    'name' => $bidder->name,
-                    'email' => $bidder->email,
-                    'phone' => $bidder->phone ?? null,
-                    'profile_picture' => $bidder->profile_picture ?? null,
-                    'role' => $bidder->role,
-                ] : null
-            ];
-        });
-    
-        return ResponseHelper::success($transformed, "Nearby bids retrieved");
+        $bids=$this->service->getParcelBids($parcelId);
+
+        return ResponseHelper::success($bids, "Nearby bids retrieved");
     }
 
     public function accept($bidId)
