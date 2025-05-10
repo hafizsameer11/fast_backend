@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 use App\Models\ParcelBid;
+use App\Models\SendParcel;
 
 class ParcelBidRepository
 {
@@ -36,7 +37,8 @@ class ParcelBidRepository
         ->whereColumn('created_by', 'rider_id') // ✅ only where created_by == rider_id
         ->get();
 
-    $parcel = $bids->first()?->parcel;
+    $parcel = SendParcel::where('id', $parcelId)
+        ->first();
 
     return [
         'bids' => $bids,
