@@ -37,7 +37,8 @@ class SendParcelRepository
 
             if ($resolvedSender && $resolvedReceiver) {
                 $toSender = $this->geoService->getRoadMetrics($riderLocation, $resolvedSender);
-                $toReceiver = $this->geoService->getRoadMetrics($resolvedSender, $resolvedReceiver);
+                $toReceiver = $this->geoService->getRoadMetrics($resolvedSender, $resolvedReceiver) ?? ['distance_km' => null, 'duration_min' => null];
+
 
                 if ($toSender && $toSender['distance_km'] <= $radius) {
                     $parcel->distance_to_sender_km = round($toSender['distance_km'], 2);
