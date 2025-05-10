@@ -10,16 +10,16 @@ return new class extends Migration
      * Run the migrations.
      */
     public function up()
-{
-    Schema::table('send_parcels', function (Blueprint $table) {
-        $table->softDeletes();
-    });
-}
+    {
+        Schema::table('send_parcels', function (Blueprint $table) {
+            $table->softDeletes();
+        });
+    }
 
-public function down()
-{
-    Schema::table('send_parcels', function (Blueprint $table) {
-        $table->dropSoftDeletes();
-    });
-}
+    public function down()
+    {
+        Schema::table('send_parcels', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
+    }
 };

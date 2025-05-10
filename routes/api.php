@@ -10,6 +10,9 @@ use App\Http\Controllers\Rider\RiderVerificationController;
 use App\Http\Controllers\TrackController;
 use App\Http\Controllers\User\AuthController;
 use App\Http\Controllers\Rider\AuthController as RiderAuthController;
+use App\Http\Controllers\Rider\DistanceController;
+use App\Http\Controllers\Rider\NearbyParcelController;
+use App\Http\Controllers\Rider\RiderLocationController;
 use App\Http\Controllers\User\AddressController;
 use App\Http\Controllers\User\SendParcelController;
 use App\Http\Controllers\User\WithdrawalController;
@@ -145,13 +148,13 @@ Route::prefix('parcel-bid')->middleware('auth:sanctum')->group(function () {
 });
 
 Route::prefix('rider/location')->middleware('auth:sanctum')->group(function () {
-    Route::post('update', [\App\Http\Controllers\Rider\RiderLocationController::class, 'updateLocation']);
-    Route::get('{riderId}', [\App\Http\Controllers\Rider\RiderLocationController::class, 'getRiderLocation']);
+    Route::post('update', [RiderLocationController::class, 'updateLocation']);
+    Route::get('{riderId}', [RiderLocationController::class, 'getRiderLocation']);
 });
-Route::post('rider/check-proximity', [\App\Http\Controllers\Rider\DistanceController::class, 'check']);
+Route::post('rider/check-proximity', [DistanceController::class, 'check']);
 
 Route::middleware('auth:sanctum')->prefix('rider')->group(function () {
-    Route::post('nearby-parcels', [\App\Http\Controllers\Rider\NearbyParcelController::class, 'index']);
+    Route::post('nearby-parcels', [NearbyParcelController::class, 'index']);
 });
 
 Route::middleware('auth:sanctum')->prefix('track')->group(function () {
