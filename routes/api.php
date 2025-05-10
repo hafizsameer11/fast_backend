@@ -114,6 +114,7 @@ Route::prefix('sendparcel')->middleware('auth:sanctum')->group(function () {
     Route::put('{id}/status', [SendParcelController::class, 'updateStatus']); // ✅ new route
     Route::post('{id}/confirm-pickup', [SendParcelController::class, 'confirmPickup']);
     Route::post('{id}/confirm-delivery', [SendParcelController::class, 'confirmDelivery']);
+    Route::get('{id}/cancel', [SendParcelController::class, 'cancelParcel']);
 });
 
 

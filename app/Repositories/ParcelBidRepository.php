@@ -31,9 +31,14 @@ class ParcelBidRepository
     }
     public function getBidsForParcel($parcelId)
     {
-        return ParcelBid::with(['rider', 'user','parcel']) // ✅ Load both sides
+        $bids= ParcelBid::with(['rider', 'user']) // ✅ Load both sides
             ->where('send_parcel_id', $parcelId)
             ->get();
+            $parcel= $bids->first()->parcel;
+            return [
+                'bids' => $bids,
+                'parcel' => $parcel,
+            ];
     }
     public function acceptBid($bidId)
     {
