@@ -30,16 +30,20 @@ class ParcelBidRepository
         // Add logic to delete data
     }
     public function getBidsForParcel($parcelId)
-    {
-        $bids= ParcelBid::with(['rider', 'user']) // ✅ Load both sides
-            ->where('send_parcel_id', $parcelId)
-            ->get();
-            $parcel= $bids->first()->parcel;
-            return [
-                'bids' => $bids,
-                'parcel' => $parcel,
-            ];
-    }
+{
+    $bids = ParcelBid::with(['rider', 'user'])
+        ->where('send_parcel_id', $parcelId)
+        ->whereColumn('created_by', 'rider_id') // ✅ only where created_by == rider_id
+        ->get();
+
+    $parcel = $bids->first()?->parcel;
+
+    return [
+        'bids' => $bids,
+        'parcel' => $parcel,
+    ];
+}
+
     public function acceptBid($bidId)
     {
         $bid = ParcelBid::findOrFail($bidId);
