@@ -113,4 +113,12 @@ class SendParcelRepository
     {
         return SendParcel::where('user_id', $userId)->with('acceptedBid.rider', 'user')->get();
     }
+    public function cancelParcel($id, $reason)
+    {
+        $parcel = SendParcel::findOrFail($id);
+        $parcel->is_canceled = true;
+        $parcel->cancellation_reason = $reason;
+        $parcel->save();
+        return $parcel;
+    }
 }

@@ -19,6 +19,10 @@ class SendParcelService
     {
         return $this->sendParcelRepository->all($latitude, $longitude);
     }
+    public function cancelParcel($id, $reason)
+    {
+        return $this->sendParcelRepository->cancelParcel($id, $reason);
+    }
 
     public function find($id)
     {

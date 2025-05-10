@@ -23,7 +23,16 @@ class SendParcelController extends Controller
     {
         $this->sendParcelService = $sendParcelService;
     }
-
+    public function cancelParcel($id, Request $request)
+    {
+        try {
+            $reason = $request->input('reason');
+            $parcel = $this->sendParcelService->cancelParcel($id, $reason);
+            return ResponseHelper::success($parcel, "Parcel canceled successfully");
+        } catch (\Throwable $th) {
+            return ResponseHelper::error($th->getMessage());
+        }
+    }
     public function create(SendParcelRequest $request)
     {
         try {
@@ -77,7 +86,7 @@ class SendParcelController extends Controller
         try {
             $rider_lat = $request->input('latitude');
             $rider_lng = $request->input('longitude');
-            $parcels = $this->sendParcelService->all( $rider_lat, $rider_lng);
+            $parcels = $this->sendParcelService->all($rider_lat, $rider_lng);
             return ResponseHelper::success($parcels, "Parcel list retrieved successfully");
         } catch (\Throwable $th) {
             $status = $th->getCode() >= 100 && $th->getCode() <= 599 ? $th->getCode() : 500;
