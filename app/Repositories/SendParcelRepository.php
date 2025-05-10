@@ -8,7 +8,7 @@ class SendParcelRepository
 {
     public function all()
     {
-        return SendParcel::with('user')->latest()->get();
+        return SendParcel::with('user')->where('is_assigned', false)->latest()->get();
     }
 
     public function find($id)
