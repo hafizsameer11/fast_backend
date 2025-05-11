@@ -13,7 +13,8 @@ return new class extends Migration
     {
         Schema::create('parcel_payments', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('parcel_id')->constrained()->onDelete('cascade');
+            $table->unsignedBigInteger('parcel_id');
+            // $table->foreignId('parcel_id')->constrained()->onDelete('cascade');
             $table->double('amount')->default(0);
             $table->string('payment_method')->default('wallet');
             $table->string('payment_status')->default('pending');
