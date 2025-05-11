@@ -81,12 +81,13 @@ class SendParcelRepository
         return SendParcel::create($data);
     }
 
-    public function update($id, array $data)
+    public function update($id, array $data,$step=null)
     {
         $parcel = SendParcel::findOrFail($id);
         $parcel->update($data);
         //create parcel payment
-        $parcelPayment = new ParcelPayment();
+        if($step==4){
+           $parcelPayment = new ParcelPayment();
         $parcelPayment->parcel_id = $parcel->id;
         $parcelPayment->amount = $data['amount'];
         $parcelPayment->payment_method = $data['payment_method'];
@@ -96,6 +97,8 @@ class SendParcelRepository
         $parcelPayment->delivery_fee = $data['delivery_fee'];
         $parcelPayment->is_pod = $data['pay_on_delivery'] ?? false;
         $parcelPayment->save();
+        }
+
 
         return $parcel;
     }

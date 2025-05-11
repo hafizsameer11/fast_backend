@@ -52,9 +52,9 @@ class SendParcelService
         }
     }
 
-    public function update($id, array $data)
+    public function update($id, array $data,$step=null)
     {
-        return $this->sendParcelRepository->update($id, $data);
+        return $this->sendParcelRepository->update($id, $data,$step=null);
     }
 
     public function delete($id)

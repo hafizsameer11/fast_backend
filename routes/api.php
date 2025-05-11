@@ -108,7 +108,7 @@ Route::prefix('sendparcel')->middleware('auth:sanctum')->group(function () {
     Route::post('{id}/step-three', [SendParcelController::class, 'stepThree']);
     Route::post('{id}/step-four', [SendParcelController::class, 'stepFour']);
     Route::get('list', action: [SendParcelController::class, 'index']);
-    Route::put('{id}/status', [SendParcelController::class, 'updateStatus']); 
+    Route::put('{id}/status', [SendParcelController::class, 'updateStatus']);
     Route::post('pay-by-bank-sender/{id}', [SendParcelController::class, 'payByBankSender']);
     Route::post('{id}/confirm-pickup', [SendParcelController::class, 'confirmPickup']);
     Route::post('{id}/confirm-delivery', [SendParcelController::class, 'confirmDelivery']);
