@@ -118,6 +118,7 @@ Route::prefix('sendparcel')->middleware('auth:sanctum')->group(function () {
     Route::post('{id}/pod-by-receiver', [SendParcelController::class, 'podReceiver']);
     Route::get('details/{id}', [SendParcelController::class, 'details']);
     Route::get('check-bid-accepted/{parcelId}', [SendParcelController::class, 'checkBidAccepted']);
+    Route::get('get-active-parcel-rider', [SendParcelController::class, 'getActiveParcelRider']);
 });
 
 Route::prefix('parcel-bid')->middleware('auth:sanctum')->group(function () {
@@ -175,8 +176,6 @@ Route::prefix('chat')->middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->prefix('user')->group(function () {
     Route::post('update-profile', [AuthController::class, 'updateProfile']);
 });
-
-
 Route::prefix('faqs')->middleware('auth:sanctum')->group(function () {
     Route::get('/user', [FaqController::class, 'userFaqs']);
     Route::get('/rider', [FaqController::class, 'riderFaqs']);

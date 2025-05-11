@@ -262,4 +262,10 @@ class SendParcelController extends Controller
         $parcel = $currentRider ? $parcel : null;
         return ResponseHelper::success($parcel, "Parcel details retrieved successfully");
     }
+    public function getActiveParcelRider()
+    {
+        $user = Auth::user();
+        $parcel = SendParcel::where('rider_id', $user->id)->where('status', 'in_transit')->latest()->get();
+        return ResponseHelper::success($parcel, "Parcel details retrieved successfully");
+    }
 }
