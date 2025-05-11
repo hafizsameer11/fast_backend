@@ -26,6 +26,24 @@ class UserService
             throw new \Exception("User not found");
         }
     }
+    public function getRiderManagement()
+    {
+        try {
+            $data = $this->UserRepository->getRiderManagement();
+            return $data;
+        } catch (\Exception $e) {
+            throw new \Exception("User not found");
+        }
+    }
+    public function getRiderDetails($userId)
+    {
+        try {
+            $userDetails = $this->UserRepository->getRiderDetails($userId);
+            return $userDetails;
+        } catch (\Exception $e) {
+            throw new \Exception("User not found for $userId    ");
+        }
+    }
     public function getUserDetails($userId)
     {
         try {

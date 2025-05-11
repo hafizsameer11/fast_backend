@@ -60,8 +60,16 @@ class SendParcel extends Model
     {
         return $this->belongsTo(User::class);
     }
+    public function rider()
+    {
+        return $this->belongsTo(User::class, 'rider_id');
+    }
     public function acceptedBid()
     {
         return $this->belongsTo(ParcelBid::class, 'accepted_bid_id');
+    }
+    public function parcelPayment()
+    {
+        return $this->hasOne(ParcelPayment::class);
     }
 }

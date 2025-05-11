@@ -57,7 +57,7 @@ class UserRepository
     public function getUserManagement()
     {
         $totalUsers = User::count();
-        $users = User::where('role', '!=', 'admin')->get();
+        $users = User::where('role',  'user')->get();
         $activeUsers = User::where('is_active', 1)->count();
         $inactiveUsers = User::where('is_active', 0)->count();
         $data = [
@@ -67,6 +67,32 @@ class UserRepository
             'users' => $users,
         ];
         return $data;
+    }
+    public function getRiderManagement()
+    {
+        $totalUsers = User::where('role', 'rider')->count();
+        $users = User::where('role',  'rider')->get();
+        $activeUsers = User::where('is_active', 1)->where('role', 'rider')->count();
+        $inactiveUsers = User::where('is_active', 0)->where('role', 'rider')->count();
+        $data = [
+            'total_users' => $totalUsers,
+            'active_users' => $activeUsers,
+            'inactive_users' => $inactiveUsers,
+            'users' => $users,
+        ];
+        return $data;
+    }
+    public function getRiderDetails($userId)
+    {
+        $user = User::with('wallet', 'riderParcel', 'bids')->where('id', $userId)->where('role', 'rider')->first();
+        if (!$user) {
+            Log::info("User not found for ID: $userId", [
+                'user_id' => $userId,
+                'timestamp' => now(),
+            ]);
+            throw new \Exception("User not found. for id $userId");
+        }
+        return $user;
     }
     public function getUserDetails($userId)
     {

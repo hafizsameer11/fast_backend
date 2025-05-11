@@ -65,6 +65,17 @@ class WalletRepository
     {
         return Transaction::where('user_id', $userId)->get();
     }
+    public function getTransactionData($userId)
+    {
+        $withdrawalTransactions = Transaction::where('user_id', $userId)->where('transaction_type', 'withdrawal')->sum('amount');
+        $topupTransactions = Transaction::where('user_id', $userId)->where('transaction_type', 'topup')->sum('amount');
+        $total = $withdrawalTransactions + $topupTransactions;
+        return [
+            'total' => $total,
+            'withdrawalTransactions' => $withdrawalTransactions,
+            'topupTransactions' => $topupTransactions,
+        ];
+    }
     public function getVirtualAccount($userId)
     {
         return VirtualAccount::where('user_id', $userId)->latest()->first();

@@ -56,7 +56,10 @@ class User extends Authenticatable
     {
         return $this->hasMany(SendParcel::class);
     }
-
+    public function riderParcel()
+    {
+        return $this->hasMany(SendParcel::class, 'rider_id');
+    }
     public function sentMessages()
     {
         return $this->hasMany(Chat::class, 'sender_id');

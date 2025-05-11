@@ -142,7 +142,11 @@ class SendParcelRepository
     }
     public function getParcelForUser($userId)
     {
-        return SendParcel::where('user_id', $userId)->with('acceptedBid.rider', 'user')->get();
+        return SendParcel::where('user_id', $userId)->with('acceptedBid.rider', 'user', 'parcelPayment')->get();
+    }
+    public function getParcelForRider($userId)
+    {
+        return SendParcel::where('rider_id', $userId)->with('acceptedBid', 'user', 'rider', 'parcelPayment')->get();
     }
     public function cancelParcel($id, $reason)
     {

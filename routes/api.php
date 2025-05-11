@@ -2,6 +2,7 @@
 
 // use App\Http\Controllers\Rider\AuthController;
 
+use App\Http\Controllers\Admin\RiderManagementController;
 use App\Http\Controllers\Admin\UsermanagementController;
 use App\Http\Controllers\Api\HistoryController;
 use App\Http\Controllers\ParcelBidController;
@@ -162,13 +163,10 @@ Route::prefix('chat')->middleware('auth:sanctum')->group(function () {
     Route::post('send', [ChatController::class, 'send']);
     Route::get('messages/{userId}', [ChatController::class, 'getMessagesWithUser']);
     Route::get('inbox', [ChatController::class, 'inbox']);
-    Route::get('connected-users', [ChatController::class, 'connectedUsers']); // 🔥 new
-    Route::get('connected-riders', [ChatController::class, 'connectRiders']); // 🔥 new
-
-
-    // ✅ Support chat routes
-    Route::post('support/send', [ChatController::class, 'sendSupport']); // user/rider to admin
-    Route::get('support/messages', [ChatController::class, 'supportMessages']); // get support history
+    Route::get('connected-users', [ChatController::class, 'connectedUsers']);
+    Route::get('connected-riders', [ChatController::class, 'connectRiders']);
+    Route::post('support/send', [ChatController::class, 'sendSupport']);
+    Route::get('support/messages', [ChatController::class, 'supportMessages']);
     Route::post('support/reply/{messageId}', [ChatController::class, 'adminReply']); // admin replies
 });
 
@@ -205,8 +203,18 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('usermanagement/get-user-details/{userId}', [UsermanagementController::class, 'getUserDetails']);
         Route::post('usermanagement/edit-user/{userId}', [UsermanagementController::class, 'editUser']);
         Route::get('usermanagement/get-parcel-for-user/{userId}', [UsermanagementController::class, 'getParcelForUser']);
+        Route::get('usermanagement/get-transactions-for-user/{userId}', [UsermanagementController::class, 'getUserTransactions']);
         Route::get('usermanagement/get-parcel-details/{parcelId}', [UsermanagementController::class, 'getParcelDetails']);
         Route::get('usermanagement/get-user-chats/{userId}', [UsermanagementController::class, 'getUserChats']);
         Route::get('usermanagement/get-conversation-between-users/{userId}/{receiverId}', [UsermanagementController::class, 'getConversationBetweenUsers']);
+    });
+    Route::prefix('admin')->group(function () {
+        Route::get('rider-management', [RiderManagementController::class, 'getUserManagment']);
+        Route::get('rider-management/get-user-details/{userId}', [RiderManagementController::class, 'getRiderDetails']);
+        Route::get('rider-management/get-parcel-for-user/{userId}', [RiderManagementController::class, 'getParcelForRider']);
+        Route::get('rider-management/get-parcel-details/{parcelId}', [RiderManagementController::class, 'getParcelDetails']);
+        Route::get('rider-management/get-user-chats/{userId}', [RiderManagementController::class, 'getUserChats']);
+        Route::get('rider-management/get-conversation-between-users/{userId}/{receiverId}', [RiderManagementController::class, 'getConversationBetweenUsers']);
+        Route::get('rider-management/get-transactions-for-user/{userId}', [RiderManagementController::class, 'getUserTransactions']);
     });
 });

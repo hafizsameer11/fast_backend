@@ -202,4 +202,8 @@ class SendParcelService
     {
         return $this->sendParcelRepository->getParcelForUser($userId);
     }
+    public function getParcelForRider($userId)
+    {
+        return $this->sendParcelRepository->getParcelForRider($userId);
+    }
 }
