@@ -67,7 +67,7 @@ class SendParcelRepository
 
     public function find($id)
     {
-        return SendParcel::with('acceptedBid.rider', 'bids')->find($id)?->fresh(); // ensures latest data
+        return SendParcel::with('acceptedBid.rider', 'bids')->find($id); // ensures latest data
     }
 
     public function create(array $data)
@@ -95,7 +95,7 @@ class SendParcelRepository
             $refference = 'PAY-' . strtoupper(uniqid());
             $parcelPayment->payment_reference = $refference;
             $parcelPayment->delivery_fee = $data['delivery_fee'];
-            $parcelPayment->is_pod = $data['pay_on_delivery'] ? true :false;
+            $parcelPayment->is_pod = $data['pay_on_delivery'] ? true : false;
             $parcelPayment->save();
         }
 

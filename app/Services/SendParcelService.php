@@ -4,6 +4,8 @@ namespace App\Services;
 
 use App\Models\ParcelPayment;
 use App\Models\Transaction;
+use App\Models\User;
+use App\Models\Wallet;
 use App\Repositories\SendParcelRepository;
 use \Exception;
 use Illuminate\Support\Facades\Log;
@@ -52,9 +54,9 @@ class SendParcelService
         }
     }
 
-    public function update($id, array $data,$step=null)
+    public function update($id, array $data, $step = null)
     {
-        return $this->sendParcelRepository->update($id, $data,$step);
+        return $this->sendParcelRepository->update($id, $data, $step);
     }
 
     public function delete($id)
@@ -105,28 +107,17 @@ class SendParcelService
     public function verifyDeliveryCode($id, $code)
     {
         $parcel = $this->sendParcelRepository->find($id);
-
-        echo "Verifying Delivery Code for Parcel ID: " . $id . "\n";
-
         if (!$parcel) {
-            echo "Parcel not found with ID: " . $id . "\n";
             return false;
         }
-
-        echo "Expected Delivery Code: " . (string) $parcel->delivery_code . "\n";
-        echo "Received Delivery Code: " . (string) $code . "\n";
-
         if ((string) $parcel->delivery_code !== (string) $code) {
-            echo "Delivery Code Verification Failed for Parcel ID: " . $id . "\n";
             return false;
         }
-
         $parcel->update([
             'is_delivery_confirmed' => 'yes',
             'status' => 'delivered',
             'delivered_at' => now(),
         ]);
-        //get parcel payment or this parcel
         $totalAmount = $parcel->amount + $parcel->delivery_fee;
         $parcelPayment = ParcelPayment::where('parcel_id', $id)->first();
         if ($parcelPayment) {
@@ -137,13 +128,70 @@ class SendParcelService
             $totalAmount = $parcelPayment->total_amount;
         }
         $parcel->refresh();
+        $admin = User::where('role', 'admin')->first();
+        $adminWallet = Wallet::where('user_id', $admin->id)->first();
+        if ($parcel->payer == 'sender') {
+            $deliveryFee = $parcel->delivery_fee;
+            $riderShare = round($deliveryFee * 0.8, 2);
+            $adminShare = $deliveryFee - $riderShare;
 
-        //if pay_on_delivery is yes than create transaction for user of receiving amount and for rider of received 80% of delivery Fee and for admin of receiving 20%
-        //if pay_on_delivery is no than create transaction for rider of receiving 80% of delivery Fee and for admin of receiving 20%
-        // //transaction for rider of deliver fee
-        // $transaction = new Transaction();
-        // $transaction->user_id = $parcel->user_id;
-        // $transaction->amount=
+            // Admin wallet must exist
+            if (!$adminWallet) {
+                $adminWallet = Wallet::create([
+                    'user_id' => $admin->id,
+                    'balance' => 0,
+                ]);
+            }
+            $adminWallet->balance += $adminShare;
+            $adminWallet->save();
+
+            // Rider wallet
+            $riderId = $parcel->acceptedBid->rider->id;
+            $riderWallet = Wallet::firstOrCreate(
+                ['user_id' => $riderId],
+                ['balance' => 0]
+            );
+            $riderWallet->balance += $riderShare;
+            $riderWallet->save();
+
+            // Admin transaction
+            Transaction::create([
+                'user_id' => $admin->id,
+                'transaction_type' => 'delivery_fee',
+                'amount' => $adminShare,
+                'status' => 'completed',
+                'reference' => 'ADMIN-FEE-' . strtoupper(uniqid()),
+            ]);
+
+            // Rider transaction
+            Transaction::create([
+                'user_id' => $riderId,
+                'transaction_type' => 'delivery_fee',
+                'amount' => $riderShare,
+                'status' => 'completed',
+                'reference' => 'RIDER-FEE-' . strtoupper(uniqid()),
+            ]);
+
+            // Deduct full fee from user if using wallet
+            if ($parcel->payment_method === 'wallet') {
+                $userWallet = Wallet::firstOrCreate(
+                    ['user_id' => $parcel->user_id],
+                    ['balance' => 0]
+                );
+                $userWallet->balance -= $deliveryFee;
+                $userWallet->save();
+
+                // User transaction
+                Transaction::create([
+                    'user_id' => $parcel->user_id,
+                    'transaction_type' => 'delivery_fee',
+                    'amount' => $deliveryFee,
+                    'status' => 'completed',
+                    'reference' => 'USER-FEE-' . strtoupper(uniqid()),
+                ]);
+            }
+        }
+
         return true;
     }
     public function getParcelForUser($userId)
