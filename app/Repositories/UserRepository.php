@@ -84,7 +84,7 @@ class UserRepository
     }
     public function getRiderDetails($userId)
     {
-        $user = User::with('wallet', 'riderParcel', 'bids', 'riderVerification')->where('id', $userId)->where('role', 'rider')->first();
+        $user = User::with('wallet', 'riderParcel', 'riderVerification')->where('id', $userId)->where('role', 'rider')->first();
         if (!$user) {
             Log::info("User not found for ID: $userId", [
                 'user_id' => $userId,
