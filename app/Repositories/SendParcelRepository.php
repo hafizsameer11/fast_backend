@@ -77,13 +77,28 @@ class SendParcelRepository
     public function details($id)
     {
         $user = Auth::user();
-        if ($user->role == 'user') {
-            return SendParcel::with('acceptedBid.rider', 'bids')->find($id);
+
+        if ($user->role === 'user') {
+            $parcel = SendParcel::with('acceptedBid.rider', 'bids')->find($id);
         } else {
-            //load user detail along it
-            return SendParcel::with('user')->find($id);
+            $parcel = SendParcel::with('user')->find($id);
         }
+
+        if (!$parcel) {
+            return response()->json(['error' => 'Parcel not found'], 404);
+        }
+
+        // Resolve coordinates from addresses
+        $senderCoords = $this->geoService->geocodeToLatLng($parcel->sender_address);
+        $receiverCoords = $this->geoService->geocodeToLatLng($parcel->receiver_address);
+
+        // Add coordinates to parcel response (as custom attributes)
+        $parcel->sender_coordinates = $senderCoords ?? null;
+        $parcel->receiver_coordinates = $receiverCoords ?? null;
+
+        return $parcel;
     }
+
 
     public function create(array $data)
     {
