@@ -12,7 +12,7 @@ class GeoService
 
     public function __construct()
     {
-        $this->apiKey = env('GOOGLE_MAPS_API_KEY');
+        $this->apiKey =config('server_secrets.google_maps_api_key');;
     }
 
     public function geocodeToLatLng(string $location): ?array
