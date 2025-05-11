@@ -18,6 +18,10 @@ class SendParcelService
     {
         $this->sendParcelRepository = $sendParcelRepository;
     }
+    public function details($id)
+    {
+        return $this->sendParcelRepository->details($id);
+    }
 
     public function all($latitude, $longitude)
     {

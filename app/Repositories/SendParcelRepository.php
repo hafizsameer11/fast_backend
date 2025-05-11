@@ -35,11 +35,11 @@ class SendParcelRepository
         $riderLocation = ['lat' => $riderLat, 'lng' => $riderLng];
         $filteredParcels = [];
 
-      $parcels = SendParcel::with('user')
-    ->where('is_assigned', false)
-    ->whereNotNull('payment_method')
-    ->latest()
-    ->get();
+        $parcels = SendParcel::with('user')
+            ->where('is_assigned', false)
+            ->whereNotNull('payment_method')
+            ->latest()
+            ->get();
 
 
         foreach ($parcels as $parcel) {
@@ -73,6 +73,16 @@ class SendParcelRepository
     public function find($id)
     {
         return SendParcel::with('acceptedBid.rider', 'bids')->find($id); // ensures latest data
+    }
+    public function details($id)
+    {
+        $user = Auth::user();
+        if ($user->role == 'user') {
+            return SendParcel::with('acceptedBid.rider', 'bids')->find($id);
+        } else {
+            //load user detail along it
+            return SendParcel::with('user')->find($id);
+        }
     }
 
     public function create(array $data)
