@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Repositories\UserRepository;
 use Illuminate\Support\Facades\Hash;
 use App\Mail\OtpMail;
+use App\Models\RiderVerification;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Mail;
 
@@ -134,7 +135,14 @@ class UserService
         if (!Hash::check($data['password'], $user->password)) {
             throw new \Exception('Invalid credentials.');
         }
-
+        if($user->role=='rider'){
+            //check rider verification
+            $riderVerification=RiderVerification::where('user_id', $user->id)->first();
+            if(!$riderVerification){
+                $user->rider_verification_status=false;
+            }
+                $user->rider_verification_status=true;
+        }
         // if (!$user || Hash::check($data['password'], hashedValue: $user->password)) {
         //     throw new \Exception('Invalid credentials.');
         // }
