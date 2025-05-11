@@ -135,13 +135,13 @@ class UserService
         if (!Hash::check($data['password'], $user->password)) {
             throw new \Exception('Invalid credentials.');
         }
-        if($user->role=='rider'){
+        if ($user->role == 'rider') {
             //check rider verification
-            $riderVerification=RiderVerification::where('user_id', $user->id)->first();
-            if(!$riderVerification){
-                $user->rider_verification_status=false;
+            $riderVerification = RiderVerification::where('user_id', $user->id)->first();
+            $user->rider_verification_status = true;
+            if (!$riderVerification) {
+                $user->rider_verification_status = false;
             }
-                $user->rider_verification_status=true;
         }
         // if (!$user || Hash::check($data['password'], hashedValue: $user->password)) {
         //     throw new \Exception('Invalid credentials.');
