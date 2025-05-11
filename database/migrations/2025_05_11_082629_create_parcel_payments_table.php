@@ -23,7 +23,7 @@ return new class extends Migration
             $table->string('paying_user')->default('sender');
             $table->string('delivery_fee_status')->default('pending');
             $table->double('total_amount')->default(0);
-            $table->foreign('parcel_id')->references('id')->on('	send_parcels')->onDelete('cascade');
+            $table->foreign('parcel_id')->references('id')->on('send_parcels')->onDelete('cascade');
             $table->timestamps();
         });
     }
