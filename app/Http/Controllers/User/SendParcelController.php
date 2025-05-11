@@ -13,7 +13,7 @@ use Illuminate\Http\Request;
 use App\Services\SendParcelService;
 use App\Helpers\ResponseHelper;
 use App\Http\Requests\SendParcelRequest;
-
+use App\Models\ParcelPayment;
 
 class SendParcelController extends Controller
 {
@@ -178,8 +178,11 @@ class SendParcelController extends Controller
             $deliveryFeePayment->status = 'completed';
             $deliveryFeePayment->reference = 'DELIVERY-FEE-' . strtoupper(uniqid());
             $deliveryFeePayment->save();
-            //get the parcel payment object
-            return ResponseHelper::success($parcel, "Parcel sent successfully");
+            $parcelPayment = ParcelPayment::where('parcel_id', $id)->first();
+            $parcelPayment->update([
+                'delivery_fee_status' => 'paid',
+            ]);
+            return ResponseHelper::success($deliveryFeePayment, "Parcel sent successfully");
         } catch (\Throwable $th) {
             return ResponseHelper::error($th->getMessage());
         }

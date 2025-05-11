@@ -26,11 +26,12 @@ class UserService
             throw new \Exception("User not found");
         }
     }
-    public function getUserDetails($userId){
-        try{
-            $userDetails=$this->UserRepository->getUserDetails($userId);
+    public function getUserDetails($userId)
+    {
+        try {
+            $userDetails = $this->UserRepository->getUserDetails($userId);
             return $userDetails;
-        }catch (\Exception $e){
+        } catch (\Exception $e) {
             throw new \Exception("User not found for $userId    ");
         }
     }
@@ -69,7 +70,7 @@ class UserService
     {
         return $this->UserRepository->update($id, $data);
     }
-    
+
     public function delete($id)
     {
         return $this->UserRepository->delete($id);
@@ -101,17 +102,24 @@ class UserService
 
     public function login(array $data)
     {
-        $query = User::where('email', $data['email']);
+        $user = User::where('email', $data['email'])->first();
 
-        if (isset($data['role'])) {
-            $query->where('role', $data['role']);
+        // if (isset($data['role'])) {
+        //     $query->where('role', $data['role']);
+        // }
+
+        // $user = $query->first();
+        if (!$user) {
+            throw new \Exception('User not found.');
         }
-
-        $user = $query->first();
-
-        if (!$user || Hash::check($data['password'], $user->password)) {
+        // Check if the password is correct
+        if (!Hash::check($data['password'], $user->password)) {
             throw new \Exception('Invalid credentials.');
         }
+
+        // if (!$user || Hash::check($data['password'], hashedValue: $user->password)) {
+        //     throw new \Exception('Invalid credentials.');
+        // }
 
         // if (!$user->otp_verified) {
         //     throw new \Exception('OTP not verified.');
