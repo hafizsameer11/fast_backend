@@ -113,6 +113,7 @@ Route::prefix('sendparcel')->middleware('auth:sanctum')->group(function () {
     Route::post('{id}/confirm-pickup', [SendParcelController::class, 'confirmPickup']);
     Route::post('{id}/confirm-delivery', [SendParcelController::class, 'confirmDelivery']);
     Route::post('{id}/cancel', [SendParcelController::class, 'cancelParcel']);
+    Route::post('{id}/pod-by-receiver', [SendParcelController::class, 'podReceiver']);
 });
 
 Route::prefix('parcel-bid')->middleware('auth:sanctum')->group(function () {

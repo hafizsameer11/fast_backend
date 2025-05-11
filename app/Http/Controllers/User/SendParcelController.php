@@ -14,6 +14,7 @@ use App\Services\SendParcelService;
 use App\Helpers\ResponseHelper;
 use App\Http\Requests\SendParcelRequest;
 use App\Models\ParcelPayment;
+use App\Models\Wallet;
 
 class SendParcelController extends Controller
 {
@@ -187,20 +188,52 @@ class SendParcelController extends Controller
             return ResponseHelper::error($th->getMessage());
         }
     }
-    public function podReceiver(Request $request, $id)
-    {
-        try{
-            $parcel = $this->sendParcelService->find($id);
-            if (!$parcel) {
-                return ResponseHelper::error("Parcel not found");
-            }
-            $parcelPayment = ParcelPayment::where('parcel_id', $id)->first();
-            $parcelPayment->update([
-                'pod_status' => 'paid'
-            ]);
-            return ResponseHelper::success($parcelPayment, "Parcel sent successfully");
-        }catch (\Throwable $th) {
-            return ResponseHelper::error($th->getMessage());
+   public function podReceiver(Request $request, $id)
+{
+    try {
+        $bankName = $request->input('bank_name');
+        $accountNumber = $request->input('account_number');
+        $accountName = $request->input('account_name');
+
+        $parcel = $this->sendParcelService->find($id);
+        if (!$parcel) {
+            return ResponseHelper::error("Parcel not found");
         }
+
+        $parcelPayment = ParcelPayment::where('parcel_id', $id)->first();
+        if (!$parcelPayment) {
+            return ResponseHelper::error("Parcel payment record not found");
+        }
+
+        // 1. Update pod_status
+        $parcelPayment->update([
+            'pod_status' => 'paid'
+        ]);
+
+        // 2. Credit the user (receiver/sender depending on your logic)
+        $receiverUser = $parcel->user; // assumes 'user' relation exists
+        $wallet = Wallet::firstOrCreate(
+            ['user_id' => $receiverUser->id],
+            ['balance' => 0]
+        );
+
+        $wallet->balance += $parcel->amount;
+        $wallet->save();
+
+        // 3. Create transaction for parcel amount only
+        Transaction::create([
+            'user_id' => $receiverUser->id,
+            'transaction_type' => 'pod_payment',
+            'amount' => $parcel->amount,
+            'status' => 'completed',
+            'reference' => 'POD-PAYMENT-' . strtoupper(uniqid()),
+        ]);
+
+        return ResponseHelper::success($parcelPayment, "PoD payment marked and user credited");
+
+    } catch (\Throwable $th) {
+        return ResponseHelper::error($th->getMessage());
     }
+}
+
 }
