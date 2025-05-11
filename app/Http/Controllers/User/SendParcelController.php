@@ -77,7 +77,7 @@ class SendParcelController extends Controller
         $data['pickup_code'] = rand(1000, 9999);
         $data['delivery_code'] = rand(1000, 9999);
 
-        $parcel = $this->sendParcelService->update($id, $data,$step=4);
+        $parcel = $this->sendParcelService->update($id, $data, $step = 4);
         return ResponseHelper::success($parcel, 'Parcel finalized and sent');
     }
 
@@ -184,6 +184,22 @@ class SendParcelController extends Controller
             ]);
             return ResponseHelper::success($deliveryFeePayment, "Parcel sent successfully");
         } catch (\Throwable $th) {
+            return ResponseHelper::error($th->getMessage());
+        }
+    }
+    public function podReceiver(Request $request, $id)
+    {
+        try{
+            $parcel = $this->sendParcelService->find($id);
+            if (!$parcel) {
+                return ResponseHelper::error("Parcel not found");
+            }
+            $parcelPayment = ParcelPayment::where('parcel_id', $id)->first();
+            $parcelPayment->update([
+                'pod_status' => 'paid'
+            ]);
+            return ResponseHelper::success($parcelPayment, "Parcel sent successfully");
+        }catch (\Throwable $th) {
             return ResponseHelper::error($th->getMessage());
         }
     }

@@ -35,7 +35,12 @@ class SendParcelRepository
         $riderLocation = ['lat' => $riderLat, 'lng' => $riderLng];
         $filteredParcels = [];
 
-        $parcels = SendParcel::with('user')->where('is_assigned', false)->latest()->get();
+      $parcels = SendParcel::with('user')
+    ->where('is_assigned', false)
+    ->whereNotNull('payment_method')
+    ->latest()
+    ->get();
+
 
         foreach ($parcels as $parcel) {
             $senderRaw = $parcel->sender_address;
