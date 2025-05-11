@@ -14,8 +14,10 @@ use App\Services\SendParcelService;
 use App\Helpers\ResponseHelper;
 use App\Http\Requests\SendParcelRequest;
 use App\Models\ParcelPayment;
+use App\Models\SendParcel;
 use App\Models\User;
 use App\Models\Wallet;
+use Illuminate\Support\Facades\Auth;
 
 class SendParcelController extends Controller
 {
@@ -244,5 +246,20 @@ class SendParcelController extends Controller
             $status = $th->getCode() >= 100 && $th->getCode() <= 599 ? $th->getCode() : 500;
             return ResponseHelper::error($th->getMessage(), $status);
         }
+    }
+    public function checkBidAccepted($parcelId)
+    {
+        $user = Auth::user();
+        $parcel = SendParcel::where('id', $parcelId)->first();
+        //check current rider bid is assiged or not or does rider id is not null
+        $currentRider = false;
+        if ($parcel->is_assigned && $parcel->rider_id != null) {
+            //now check weather current rider is being asigned or not
+            if ($parcel->rider_id == $user->id) {
+                $currentRider = true;
+            }
+        }
+        $parcel = $currentRider ? $parcel : null;
+        return ResponseHelper::success($parcel, "Parcel details retrieved successfully");
     }
 }

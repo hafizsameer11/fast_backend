@@ -115,6 +115,7 @@ Route::prefix('sendparcel')->middleware('auth:sanctum')->group(function () {
     Route::post('{id}/cancel', [SendParcelController::class, 'cancelParcel']);
     Route::post('{id}/pod-by-receiver', [SendParcelController::class, 'podReceiver']);
     Route::get('details/{id}', [SendParcelController::class, 'details']);
+    Route::get('check-bid-accepted/{parcelId}', [SendParcelController::class, 'checkBidAccepted']);
 });
 
 Route::prefix('parcel-bid')->middleware('auth:sanctum')->group(function () {
