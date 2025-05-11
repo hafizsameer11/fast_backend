@@ -77,4 +77,7 @@ class User extends Authenticatable
     {
         return $this->hasOne(Wallet::class);
     }
+    public function riderVerification(){
+        return $this->hasOne(RiderVerification::class);
+    }
 }
