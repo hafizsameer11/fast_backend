@@ -8,6 +8,7 @@ use App\Http\Requests\User\StepFourRequest;
 use App\Http\Requests\User\StepOneRequest;
 use App\Http\Requests\User\StepThreeRequest;
 use App\Http\Requests\User\StepTwoRequest;
+use App\Models\Transaction;
 use Illuminate\Http\Request;
 use App\Services\SendParcelService;
 use App\Helpers\ResponseHelper;
@@ -160,5 +161,27 @@ class SendParcelController extends Controller
         ]);
 
         return ResponseHelper::success($parcel, "Location updated.");
+    }
+    public function payByBankSender(Request $request, $id)
+    {
+        try {
+            //get parcel
+            $parcel = $this->sendParcelService->find($id);
+            if (!$parcel) {
+                return ResponseHelper::error("Parcel not found");
+            }
+            //create transaction for delivery fee
+            $deliveryFeePayment = new Transaction();
+            $deliveryFeePayment->user_id = auth()->id();
+            $deliveryFeePayment->transaction_type = 'delivery_fee';
+            $deliveryFeePayment->amount = $parcel->delivery_fee;
+            $deliveryFeePayment->status = 'completed';
+            $deliveryFeePayment->reference = 'DELIVERY-FEE-' . strtoupper(uniqid());
+            $deliveryFeePayment->save();
+            //get the parcel payment object
+            return ResponseHelper::success($parcel, "Parcel sent successfully");
+        } catch (\Throwable $th) {
+            return ResponseHelper::error($th->getMessage());
+        }
     }
 }
