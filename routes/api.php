@@ -119,6 +119,7 @@ Route::prefix('sendparcel')->middleware('auth:sanctum')->group(function () {
     Route::get('details/{id}', [SendParcelController::class, 'details']);
     Route::get('check-bid-accepted/{parcelId}', [SendParcelController::class, 'checkBidAccepted']);
     Route::get('get-active-parcel-rider', [SendParcelController::class, 'getActiveParcelRider']);
+    Route::get('get-active-parcel-user', [SendParcelController::class, 'getActiveParcelUser']);
 });
 
 Route::prefix('parcel-bid')->middleware('auth:sanctum')->group(function () {
