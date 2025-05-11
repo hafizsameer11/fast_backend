@@ -2,6 +2,7 @@
 
 namespace App\Repositories;
 
+use App\Models\ParcelPayment;
 use App\Models\RiderLocation;
 use App\Models\SendParcel;
 use App\Services\GeoService;
@@ -84,6 +85,18 @@ class SendParcelRepository
     {
         $parcel = SendParcel::findOrFail($id);
         $parcel->update($data);
+        //create parcel payment
+        $parcelPayment = new ParcelPayment();
+        $parcelPayment->parcel_id = $parcel->id;
+        $parcelPayment->amount = $data['amount'];
+        $parcelPayment->payment_method = $data['payment_method'];
+        $parcelPayment->payment_status = 'pending';
+        $refference = 'PAY-' . strtoupper(uniqid());
+        $parcelPayment->payment_reference = $refference;
+        $parcelPayment->delivery_fee = $data['delivery_fee'];
+        $parcelPayment->is_pod = $data['pay_on_delivery'] ?? false;
+        $parcelPayment->save();
+
         return $parcel;
     }
 

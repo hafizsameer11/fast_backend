@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\ParcelPayment;
+use App\Models\Transaction;
 use App\Repositories\SendParcelRepository;
 use \Exception;
 use Illuminate\Support\Facades\Log;
@@ -124,19 +126,28 @@ class SendParcelService
             'status' => 'delivered',
             'delivered_at' => now(),
         ]);
+        //get parcel payment or this parcel
+        $totalAmount = $parcel->amount + $parcel->delivery_fee;
+        $parcelPayment = ParcelPayment::where('parcel_id', $id)->first();
+        if ($parcelPayment) {
+            $parcelPayment->update([
+                'payment_status' => 'completed',
+                'delivery_fee_status' => 'paid',
+            ]);
+            $totalAmount = $parcelPayment->total_amount;
+        }
+        $parcel->refresh();
 
-        $parcel->refresh(); // ✅ re-fetch to verify
-
-        echo "After Update — Status: " . $parcel->status . "\n";
-        echo "After Update — is_delivery_confirmed: " . ($parcel->is_delivery_confirmed ? 'Yes' : 'No') . "\n";
-        echo "Delivery confirmed for Parcel ID: " . $id . "\n";
-        echo "Status updated to 'delivered'.\n";
-
+        //if pay_on_delivery is yes than create transaction for user of receiving amount and for rider of received 80% of delivery Fee and for admin of receiving 20%
+        //if pay_on_delivery is no than create transaction for rider of receiving 80% of delivery Fee and for admin of receiving 20%
+        // //transaction for rider of deliver fee
+        // $transaction = new Transaction();
+        // $transaction->user_id = $parcel->user_id;
+        // $transaction->amount=
         return true;
     }
     public function getParcelForUser($userId)
     {
         return $this->sendParcelRepository->getParcelForUser($userId);
     }
-
 }
