@@ -95,7 +95,7 @@ class SendParcelRepository
             $refference = 'PAY-' . strtoupper(uniqid());
             $parcelPayment->payment_reference = $refference;
             $parcelPayment->delivery_fee = $data['delivery_fee'];
-            $parcelPayment->is_pod = $data['pay_on_delivery'] ?ture :false;
+            $parcelPayment->is_pod = $data['pay_on_delivery'] ? true :false;
             $parcelPayment->save();
         }
 
