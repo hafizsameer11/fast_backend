@@ -2,6 +2,7 @@
 
 // use App\Http\Controllers\Rider\AuthController;
 
+use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\RiderManagementController;
 use App\Http\Controllers\Admin\UsermanagementController;
 use App\Http\Controllers\Api\HistoryController;
@@ -217,4 +218,5 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('rider-management/get-conversation-between-users/{userId}/{receiverId}', [RiderManagementController::class, 'getConversationBetweenUsers']);
         Route::get('rider-management/get-transactions-for-user/{userId}', [RiderManagementController::class, 'getUserTransactions']);
     });
+    Route::get('booking-management', [BookingController::class, 'getBookingsData']);
 });
