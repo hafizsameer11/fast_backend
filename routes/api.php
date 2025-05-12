@@ -147,6 +147,7 @@ Route::middleware('auth:sanctum')->prefix('track')->group(function () {
 
 Route::prefix('parcel-review')->middleware('auth:sanctum')->group(function () {
     Route::post('submit', [ParcelReviewController::class, 'submit']);
+    Route::get('/{userId}', [ParcelReviewController::class, 'getReviewsForUser']);
 });
 
 Route::middleware('auth:sanctum')->prefix('sendparcel')->group(function () {
@@ -210,8 +211,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('usermanagement/get-user-chats/{userId}', [UsermanagementController::class, 'getUserChats']);
         Route::get('usermanagement/get-conversation-between-users/{userId}/{receiverId}', [UsermanagementController::class, 'getConversationBetweenUsers']);
         Route::post('add-user', [AuthController::class, 'addUser']);
-       
-       
+
+
         Route::get('rider-management', [RiderManagementController::class, 'getUserManagment']);
         Route::get('rider-management/get-user-details/{userId}', [RiderManagementController::class, 'getRiderDetails']);
         Route::get('rider-management/get-parcel-for-user/{userId}', [RiderManagementController::class, 'getParcelForRider']);

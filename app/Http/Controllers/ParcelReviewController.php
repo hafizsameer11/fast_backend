@@ -23,10 +23,14 @@ class ParcelReviewController extends Controller
         $data = $request->validated();
         $data['from_user_id'] = auth()->id();
         $user=Auth::user();
-        
+
 
         $review = $this->parcelReviewService->submitReview($data);
 
         return ResponseHelper::success($review, 'Review submitted successfully');
+    }
+    public function getReviewsForUser($userId)
+    {
+        return $this->parcelReviewService->getReviewsForUser($userId);
     }
 }
