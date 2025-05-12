@@ -57,7 +57,7 @@ class UserRepository
     public function getUserManagement()
     {
         $totalUsers = User::count();
-        $users = User::where('role',  'user')->get();
+        $users = User::with('wallet')->where('role',  'user')->get();
         $activeUsers = User::where('is_active', 1)->count();
         $inactiveUsers = User::where('is_active', 0)->count();
         $data = [
@@ -96,12 +96,11 @@ class UserRepository
     }
     public function getUserDetails($userId)
     {
-        $user = User::where('id', $userId)->where('role', '!=', value: 'admin')->with('wallet', 'sendParcel.bids', 'addresses')->first();
+        $user = User::with('wallet')->where('id', $userId)->where('role', '!=', value: 'admin')->with('wallet', 'sendParcel.bids', 'addresses')->first();
         if (!$user) {
             Log::info("User not found for ID: $userId", [
                 'user_id' => $userId,
                 'timestamp' => now(),
-
             ]);
             throw new \Exception("User not found. for id $userId");
         }

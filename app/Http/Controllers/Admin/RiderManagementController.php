@@ -52,6 +52,8 @@ class RiderManagementController extends Controller
             // $data = $this->userService->getParcelForUser($userId);
             return ResponseHelper::success($data);
         } catch (Exception $e) {
+            // log errors
+            \Log::error("Error fetching parcels for user $userId: " . $e->getMessage());
             return ResponseHelper::error("User not found for $userId");
         }
     }

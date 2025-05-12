@@ -4,6 +4,7 @@
 
 use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\RiderManagementController;
+use App\Http\Controllers\Admin\TransactionsManagementController;
 use App\Http\Controllers\Admin\UsermanagementController;
 use App\Http\Controllers\Api\HistoryController;
 use App\Http\Controllers\ParcelBidController;
@@ -208,8 +209,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('usermanagement/get-parcel-details/{parcelId}', [UsermanagementController::class, 'getParcelDetails']);
         Route::get('usermanagement/get-user-chats/{userId}', [UsermanagementController::class, 'getUserChats']);
         Route::get('usermanagement/get-conversation-between-users/{userId}/{receiverId}', [UsermanagementController::class, 'getConversationBetweenUsers']);
-    });
-    Route::prefix('admin')->group(function () {
+        Route::post('add-user', [AuthController::class, 'addUser']);
+       
+       
         Route::get('rider-management', [RiderManagementController::class, 'getUserManagment']);
         Route::get('rider-management/get-user-details/{userId}', [RiderManagementController::class, 'getRiderDetails']);
         Route::get('rider-management/get-parcel-for-user/{userId}', [RiderManagementController::class, 'getParcelForRider']);
@@ -217,6 +219,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('rider-management/get-user-chats/{userId}', [RiderManagementController::class, 'getUserChats']);
         Route::get('rider-management/get-conversation-between-users/{userId}/{receiverId}', [RiderManagementController::class, 'getConversationBetweenUsers']);
         Route::get('rider-management/get-transactions-for-user/{userId}', [RiderManagementController::class, 'getUserTransactions']);
+
+
+        Route::get('transactions/get-all',[TransactionsManagementController::class,'getTransactions']);
     });
     Route::get('booking-management', [BookingController::class, 'getBookingsData']);
 });

@@ -63,7 +63,7 @@ class WalletRepository
     }
     public function getTransactionHistory($userId)
     {
-        return Transaction::where('user_id', $userId)->get();
+        return Transaction::with('user')->where('user_id', $userId)->get();
     }
     public function getTransactionData($userId)
     {

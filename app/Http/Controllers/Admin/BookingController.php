@@ -19,14 +19,15 @@ class BookingController extends Controller
     {
         $bookings = SendParcel::whereNotNull('payment_method')->with('user', 'rider', 'acceptedBid')->latest()->get();
         $totalBookings = count($bookings);
-        $activeBookings = SendParcel::where('status', 'in_transit')->whereNotNull('payment_method')->with('user', 'rider', 'acceptedBid')->latest()->get();
-        $completedBookings = SendParcel::where('status', 'delivered')->whereNotNull('payment_method')->with('user', 'rider', 'acceptedBid')->latest()->get();
-        $cancelledBookings = SendParcel::where('status', 'cancelled')->whereNotNull('payment_method')->with('user', 'rider', 'acceptedBid')->latest()->get();
+        $activeBookings = SendParcel::where('status', 'in_transit')->whereNotNull('payment_method')->with('user', 'rider', 'acceptedBid')->latest()->count();
+        $completedBookings = SendParcel::where('status', 'delivered')->whereNotNull('payment_method')->with('user', 'rider', 'acceptedBid')->latest()->count();
+        $cancelledBookings = SendParcel::where('status', 'cancelled')->whereNotNull('payment_method')->with('user', 'rider', 'acceptedBid')->latest()->count();
         $data = [
             'totalBookings' => $totalBookings,
             'activeBookings' => $activeBookings,
             'completedBookings' => $completedBookings,
-            'cancelledBookings' => $cancelledBookings
+            'cancelledBookings' => $cancelledBookings,
+            'bookings' => $bookings,
         ];
         return ResponseHelper::success($data, "Bookings data retrieved successfully");
     }
