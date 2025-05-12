@@ -21,6 +21,7 @@ use App\Http\Controllers\User\SendParcelController;
 use App\Http\Controllers\User\WithdrawalController;
 use App\Http\Controllers\User\ChatController;
 use App\Http\Controllers\User\FaqController;
+use App\Http\Controllers\UserNotificationController;
 use App\Http\Controllers\WalletController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -225,4 +226,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('transactions/get-all',[TransactionsManagementController::class,'getTransactions']);
     });
     Route::get('booking-management', [BookingController::class, 'getBookingsData']);
+});
+Route::middleware('auth:sanctum')->prefix('notifications')->group(function () {
+    Route::get('/', [UserNotificationController::class, 'index']);
+    Route::get('/unread-count', [UserNotificationController::class, 'unreadCount']);
+    Route::put('/mark-as-read/{id}', [UserNotificationController::class, 'markAsRead']);
 });
