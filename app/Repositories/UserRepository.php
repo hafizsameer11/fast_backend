@@ -71,7 +71,7 @@ class UserRepository
     public function getRiderManagement()
     {
         $totalUsers = User::where('role', 'rider')->count();
-        $users = User::where('role',  'rider')->get();
+        $users = User::with('wallet')->where('role',  'rider')->get();
         $activeUsers = User::where('is_active', 1)->where('role', 'rider')->count();
         $inactiveUsers = User::where('is_active', 0)->where('role', 'rider')->count();
         $data = [
