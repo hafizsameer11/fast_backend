@@ -24,7 +24,7 @@ class SubmitParcelReviewRequest extends FormRequest
     {
         return [
             'send_parcel_id' => 'required|exists:send_parcels,id',
-            'to_user_id' => 'required|exists:users,id',
+            'to_user_id' => 'nullable|exists:users,id',
             'rating' => 'required|integer|min:1|max:5',
             'review' => 'required|string|max:1000',
         ];

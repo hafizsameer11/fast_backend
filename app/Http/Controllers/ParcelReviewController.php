@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Services\ParcelReviewService;
 use App\Helpers\ResponseHelper;
 use App\Http\Requests\SubmitParcelReviewRequest;
+use Illuminate\Support\Facades\Auth;
 
 class ParcelReviewController extends Controller
 {
@@ -21,6 +22,8 @@ class ParcelReviewController extends Controller
     {
         $data = $request->validated();
         $data['from_user_id'] = auth()->id();
+        $user=Auth::user();
+        
 
         $review = $this->parcelReviewService->submitReview($data);
 
