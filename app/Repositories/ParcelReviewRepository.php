@@ -17,6 +17,14 @@ class ParcelReviewRepository
         } else {
             $data['to_user_id'] = $parcel->user_id;
         }
+        //chek if already reveeiw with this to user and parcel exsts
+        $review = ParcelReview::where('to_user_id', $data['to_user_id'])
+            ->where('send_parcel_id', $data['send_parcel_id'])
+            ->first();
+            if ($review) {
+                throw new \Exception("Review already exists");
+                // return $review;
+            }
         return ParcelReview::create($data);
     }
 

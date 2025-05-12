@@ -20,7 +20,8 @@ class ParcelReviewController extends Controller
 
     public function submit(SubmitParcelReviewRequest $request)
     {
-        $data = $request->validated();
+       try{
+         $data = $request->validated();
         $data['from_user_id'] = auth()->id();
         $user=Auth::user();
 
@@ -28,6 +29,9 @@ class ParcelReviewController extends Controller
         $review = $this->parcelReviewService->submitReview($data);
 
         return ResponseHelper::success($review, 'Review submitted successfully');
+       }catch(\Exception $e){
+        return ResponseHelper::error($e->getMessage());
+       }
     }
     public function getReviewsForUser($userId)
     {
