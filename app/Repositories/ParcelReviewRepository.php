@@ -11,7 +11,7 @@ class ParcelReviewRepository
     public function create(array $data)
     {
         $user = Auth::user();
-        $parcel = SendParcel::find($data['parcel_id']);
+        $parcel = SendParcel::find($data['send_parcel_id']);
         if ($user->role == 'user') {
             $data['to_user_id'] = $parcel->rider_id;
         } else {
