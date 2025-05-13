@@ -91,6 +91,7 @@ class SendParcelController extends Controller
         try {
             $rider_lat = $request->input('latitude');
             $rider_lng = $request->input('longitude');
+            Log::info("Rider latitude: $rider_lat, Rider longitude: $rider_lng");
             $parcels = $this->sendParcelService->all($rider_lat, $rider_lng);
             return ResponseHelper::success($parcels, "Parcel list retrieved successfully");
         } catch (\Throwable $th) {
