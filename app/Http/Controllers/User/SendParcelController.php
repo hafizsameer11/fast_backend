@@ -18,6 +18,7 @@ use App\Models\SendParcel;
 use App\Models\User;
 use App\Models\Wallet;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class SendParcelController extends Controller
 {
