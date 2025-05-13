@@ -19,22 +19,22 @@ class SendParcelRepository
 
     public function all($latitude, $longitude)
     {
-        $user = Auth::user();
-        $riderLocation = new RiderLocation();
-        $riderLocation->rider_id = $user->id;
-        $riderLocation->latitude = $latitude;
-        $riderLocation->longitude = $longitude;
-        $riderLocation->save();
-        $riderLat = $latitude;
-        $riderLng = $longitude;
-        $radius = 100; // in KM
+        // $user = Auth::user();
+        // $riderLocation = new RiderLocation();
+        // $riderLocation->rider_id = $user->id;
+        // $riderLocation->latitude = $latitude;
+        // $riderLocation->longitude = $longitude;
+        // $riderLocation->save();
+        // $riderLat = $latitude;
+        // $riderLng = $longitude;
+        // $radius = 100; // in KM
 
-        if (!$riderLat || !$riderLng) {
-            return response()->json(['error' => 'Missing rider coordinates'], 422);
-        }
+        // if (!$riderLat || !$riderLng) {
+        //     return response()->json(['error' => 'Missing rider coordinates'], 422);
+        // }
 
-        $riderLocation = ['lat' => $riderLat, 'lng' => $riderLng];
-        $filteredParcels = [];
+        // $riderLocation = ['lat' => $riderLat, 'lng' => $riderLng];
+        // $filteredParcels = [];
 
         $parcels = SendParcel::with('user')
             ->where('is_assigned', false)
@@ -43,31 +43,32 @@ class SendParcelRepository
             ->get();
 
 
-        foreach ($parcels as $parcel) {
-            $senderRaw = $parcel->sender_address;
-            $receiverRaw = $parcel->receiver_address;
+        // foreach ($parcels as $parcel) {
+        //     $senderRaw = $parcel->sender_address;
+        //     $receiverRaw = $parcel->receiver_address;
 
-            $resolvedSender = $this->geoService->geocodeToLatLng($senderRaw);
-            $resolvedReceiver = $this->geoService->geocodeToLatLng($receiverRaw);
+        //     $resolvedSender = $this->geoService->geocodeToLatLng($senderRaw);
+        //     $resolvedReceiver = $this->geoService->geocodeToLatLng($receiverRaw);
 
-            if ($resolvedSender && $resolvedReceiver) {
-                $toSender = $this->geoService->getRoadMetrics($riderLocation, $resolvedSender);
-                $toReceiver = $this->geoService->getRoadMetrics($resolvedSender, $resolvedReceiver) ?? ['distance_km' => null, 'duration_min' => null];
+        //     if ($resolvedSender && $resolvedReceiver) {
+        //         $toSender = $this->geoService->getRoadMetrics($riderLocation, $resolvedSender);
+        //         $toReceiver = $this->geoService->getRoadMetrics($resolvedSender, $resolvedReceiver) ?? ['distance_km' => null, 'duration_min' => null];
 
 
-                if ($toSender && $toSender['distance_km'] <= $radius) {
-                    $parcel->distance_to_sender_km = round($toSender['distance_km'], 2);
-                    $parcel->eta_to_sender_min = $toSender['duration_min'];
+        //         if ($toSender && $toSender['distance_km'] <= $radius) {
+        //             $parcel->distance_to_sender_km = round($toSender['distance_km'], 2);
+        //             $parcel->eta_to_sender_min = $toSender['duration_min'];
 
-                    $parcel->distance_to_receiver_km = round($toReceiver['distance_km'], 2);
-                    $parcel->eta_to_receiver_min = $toReceiver['duration_min'];
+        //             $parcel->distance_to_receiver_km = round($toReceiver['distance_km'], 2);
+        //             $parcel->eta_to_receiver_min = $toReceiver['duration_min'];
 
-                    $filteredParcels[] = $parcel;
-                }
-            }
-        }
+        //             $filteredParcels[] = $parcel;
+        //         }
+        //     }
+        // }
 
-        return $filteredParcels;
+        // return $filteredParcels;
+        return $parcels;
     }
 
 
