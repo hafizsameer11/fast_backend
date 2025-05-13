@@ -42,6 +42,10 @@ class SendParcel extends Model
         'scheduled_time',
         'is_canceled',
         'cancellation_reason',
+        'receiver_long',
+        'receiver_lat',
+        'sender_long',
+        'sender_lat',
 
     ];
 

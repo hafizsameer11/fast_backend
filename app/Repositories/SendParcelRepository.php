@@ -7,6 +7,7 @@ use App\Models\RiderLocation;
 use App\Models\SendParcel;
 use App\Services\GeoService;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class SendParcelRepository
 {
@@ -103,6 +104,31 @@ class SendParcelRepository
     public function create(array $data)
     {
         // Ensure initial status is ordered (optional safety)
+        $geoService = new GeoService();
+
+        // Geocode sender address
+        if (isset($data['sender_address'])) {
+            $senderCoords = $geoService->geocodeToLatLng($data['sender_address']);
+            if ($senderCoords) {
+                $data['sender_lat'] = $senderCoords['lat'];
+                $data['sender_long'] = $senderCoords['lng'];
+            } else {
+                Log::info("Invalid receiver address — geocoding failed.");
+            }
+        }
+
+        // Geocode receiver address
+        if (isset($data['receiver_address'])) {
+            $receiverCoords = $geoService->geocodeToLatLng($data['receiver_address']);
+            if ($receiverCoords) {
+                $data['receiver_lat'] = $receiverCoords['lat'];
+                $data['receiver_long'] = $receiverCoords['lng'];
+            } else {
+                Log::info("Invalid receiver address — geocoding failed.");
+                // throw new \Exception("Invalid receiver address — geocoding failed.");
+            }
+        }
+
         $data['status'] = 'ordered';
 
         // Set the ordered_at timestamp
