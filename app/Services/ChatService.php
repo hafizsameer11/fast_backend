@@ -58,12 +58,12 @@ class ChatService
     public function isRiderConnectedToUser($riderId, $userId)
     {
         return \App\Models\SendParcel::where(function ($query) use ($riderId, $userId) {
-                $query->where('rider_id', $riderId)
-                      ->where('user_id', $userId);
-            })
+            $query->where('rider_id', $riderId)
+                ->where('user_id', $userId);
+        })
             ->orWhere(function ($query) use ($riderId, $userId) {
                 $query->where('rider_id', $userId)
-                      ->where('user_id', $riderId);
+                    ->where('user_id', $riderId);
             })
             ->exists();
     }
@@ -75,16 +75,39 @@ class ChatService
             $query->select('user_id')
                 ->from('send_parcels')
                 ->where('rider_id', $riderId);
-        })->get(['id', 'name', 'email', 'phone','profile_picture']);
+        })->get(['id', 'name', 'email', 'phone', 'profile_picture']);
     }
     public function getRidersConnectedToUser($userId)
     {
-        return \App\Models\User::whereIn('id', function ($query) use ($userId) {
+        $riders = \App\Models\User::whereIn('id', function ($query) use ($userId) {
             $query->select('rider_id')
-                  ->from('send_parcels')
-                  ->where('user_id', $userId);
-        })->get(['id', 'name', 'email', 'phone','profile_picture']);
+                ->from('send_parcels')
+                ->where('user_id', $userId);
+        })->get(['id', 'name', 'email', 'phone', 'profile_picture']);
+
+        // Attach last message manually without changing structure
+        $riders->map(function ($rider) use ($userId) {
+            $lastMessage = \App\Models\Chat::where(function ($query) use ($rider, $userId) {
+                $query->where('sender_id', $userId)->where('receiver_id', $rider->id);
+            })
+                ->orWhere(function ($query) use ($rider, $userId) {
+                    $query->where('sender_id', $rider->id)->where('receiver_id', $userId);
+                })
+                ->latest('sent_at')
+                ->first();
+
+            $rider->last_message = $lastMessage ? [
+                'message' => $lastMessage->message,
+                'sender_id' => $lastMessage->sender_id,
+                'sent_at' => $lastMessage->sent_at,
+            ] : null;
+
+            return $rider;
+        });
+
+        return $riders;
     }
+
     public function getConversationBetweenUsers($userId, $receiverId)
     {
         return $this->chatRepository->getConversationBetweenUsers($userId, $receiverId);

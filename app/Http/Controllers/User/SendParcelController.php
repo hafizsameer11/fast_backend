@@ -18,6 +18,7 @@ use App\Models\SendParcel;
 use App\Models\User;
 use App\Models\Wallet;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class SendParcelController extends Controller
 {
@@ -91,6 +92,7 @@ class SendParcelController extends Controller
         try {
             $rider_lat = $request->input('latitude');
             $rider_lng = $request->input('longitude');
+            Log::info("Rider latitude: $rider_lat, Rider longitude: $rider_lng");
             $parcels = $this->sendParcelService->all($rider_lat, $rider_lng);
             return ResponseHelper::success($parcels, "Parcel list retrieved successfully");
         } catch (\Throwable $th) {

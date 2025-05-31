@@ -25,6 +25,7 @@ use App\Http\Controllers\User\SendParcelController;
 use App\Http\Controllers\User\WithdrawalController;
 use App\Http\Controllers\User\ChatController;
 use App\Http\Controllers\User\FaqController;
+use App\Http\Controllers\UserNotificationController;
 use App\Http\Controllers\WalletController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
@@ -151,6 +152,7 @@ Route::middleware('auth:sanctum')->prefix('track')->group(function () {
 
 Route::prefix('parcel-review')->middleware('auth:sanctum')->group(function () {
     Route::post('submit', [ParcelReviewController::class, 'submit']);
+    Route::get('/{userId}', [ParcelReviewController::class, 'getReviewsForUser']);
 });
 
 Route::middleware('auth:sanctum')->prefix('sendparcel')->group(function () {
@@ -264,4 +266,9 @@ Route::middleware('auth:sanctum')->group(function () {
 
     });
     Route::get('booking-management', [BookingController::class, 'getBookingsData']);
+});
+Route::middleware('auth:sanctum')->prefix('notifications')->group(function () {
+    Route::get('/', [UserNotificationController::class, 'index']);
+    Route::get('/unread-count', [UserNotificationController::class, 'unreadCount']);
+    Route::put('/mark-as-read/{id}', [UserNotificationController::class, 'markAsRead']);
 });

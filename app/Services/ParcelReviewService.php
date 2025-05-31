@@ -15,7 +15,11 @@ class ParcelReviewService
 
     public function submitReview(array $data)
     {
-        return $this->parcelReviewRepository->create($data);
+        try{
+            return $this->parcelReviewRepository->create($data);
+        }catch(\Exception $e){
+            throw $e;
+        }
     }
 
     public function getReviewsForUser($userId)
