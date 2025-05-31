@@ -142,6 +142,7 @@ class AuthController extends Controller
             }
             // add opt_verified
             $validatedData['otp_verified'] = 1;
+            $validatedData['is_active'] = 1;
 
             // Create the user
             $user = User::create($validatedData);

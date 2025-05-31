@@ -2,8 +2,12 @@
 
 // use App\Http\Controllers\Rider\AuthController;
 
+use App\Http\Controllers\Admin\AdminManagementController;
+use App\Http\Controllers\Admin\AppBannerController;
+use App\Http\Controllers\Admin\AppNotificationController;
 use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\RiderManagementController;
+use App\Http\Controllers\Admin\RoleModuleController;
 use App\Http\Controllers\Admin\TransactionsManagementController;
 use App\Http\Controllers\Admin\UsermanagementController;
 use App\Http\Controllers\Api\HistoryController;
@@ -210,8 +214,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('usermanagement/get-user-chats/{userId}', [UsermanagementController::class, 'getUserChats']);
         Route::get('usermanagement/get-conversation-between-users/{userId}/{receiverId}', [UsermanagementController::class, 'getConversationBetweenUsers']);
         Route::post('add-user', [AuthController::class, 'addUser']);
-       
-       
+
+
         Route::get('rider-management', [RiderManagementController::class, 'getUserManagment']);
         Route::get('rider-management/get-user-details/{userId}', [RiderManagementController::class, 'getRiderDetails']);
         Route::get('rider-management/get-parcel-for-user/{userId}', [RiderManagementController::class, 'getParcelForRider']);
@@ -221,7 +225,43 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('rider-management/get-transactions-for-user/{userId}', [RiderManagementController::class, 'getUserTransactions']);
 
 
-        Route::get('transactions/get-all',[TransactionsManagementController::class,'getTransactions']);
+        Route::get('transactions/get-all', [TransactionsManagementController::class, 'getTransactions']);
+
+
+
+        Route::prefix('notifications')->group(function () {
+            Route::get('/', [AppNotificationController::class, 'index']);
+            Route::post('/store', [AppNotificationController::class, 'store']);
+            Route::post('/update/{id}', [AppNotificationController::class, 'update']);
+            Route::delete('/destory/{id}', [AppNotificationController::class, 'destroy']);
+        });
+        Route::prefix('banners')->group(function () {
+            Route::get('/', [AppBannerController::class, 'index']);
+            Route::post('/store', [AppBannerController::class, 'store']);
+            Route::post('/update/{id}', [AppBannerController::class, 'update']);
+            Route::delete('/delete/{id}', [AppBannerController::class, 'destroy']);
+        });
+        Route::prefix('roles')->group(function () {
+            Route::get('/', [RoleModuleController::class, 'rolesindex']);
+            Route::post('create', [RoleModuleController::class, 'createRole']);
+            Route::put('update/{id}', [RoleModuleController::class, 'updateRole']);
+            Route::delete('delete/{id}', [RoleModuleController::class, 'deleteRole']);
+            Route::get('with-permissions', [RoleModuleController::class, 'getRolesWithModules']);
+            Route::post('{roleId}/assign-modules', [RoleModuleController::class, 'assignModulesToRole']);
+        });
+
+        Route::prefix('modules')->group(function () {
+            Route::get('/', [RoleModuleController::class, 'index']);
+            Route::post('create', [RoleModuleController::class, 'createModule']);
+            Route::put('update/{id}', [RoleModuleController::class, 'updateModule']);
+            Route::delete('delete/{id}', [RoleModuleController::class, 'deleteModule']);
+        });
+
+        Route::prefix('admin-management')->group(function () {
+            Route::get('/',[AdminManagementController::class,'index']);
+            Route::post('/add-admin',[AdminManagementController::class,'addUser']);
+        });
+
     });
     Route::get('booking-management', [BookingController::class, 'getBookingsData']);
 });

@@ -20,7 +20,7 @@ class AddUserRequest extends FormRequest
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:6',
             'phone' => 'required|string|max:15',
-            'role' => 'required|in:admin,user,rider', // Allowed roles
+            'role' => 'required', // Allowed roles
             'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Profile picture validation
         ];
     }
