@@ -266,6 +266,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::prefix('admin-management')->group(function () {
             Route::get('/', [AdminManagementController::class, 'index']);
             Route::post('/add-admin', [AdminManagementController::class, 'addUser']);
+            Route::post('/update-admin/{id}', [AdminManagementController::class, 'updateUser']);
         });
         Route::get('/earn-report', [BookingController::class, 'EarnReport']);
         Route::get('/reviews', [RatingController::class, 'index']);

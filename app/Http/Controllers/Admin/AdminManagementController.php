@@ -48,4 +48,35 @@ class AdminManagementController extends Controller
             return ResponseHelper::error($th->getMessage());
         }
     }
+    public function updateUser(Request $request, $id)
+    {
+        try {
+            $user = User::findOrFail($id);
+
+            $data = $request->only([
+                'name',
+                'email',
+                'phone',
+                'role',
+                'is_active'
+            ]);
+
+            if ($request->filled('password')) {
+                $data['password'] = bcrypt($request->input('password'));
+            }
+
+            if ($request->hasFile('profile_picture')) {
+                $file = $request->file('profile_picture');
+                $filePath = $file->store('profile_pictures', 'public');
+                $data['profile_picture'] = $filePath;
+            }
+
+            $user->update($data);
+
+            return ResponseHelper::success($user, 'User updated successfully');
+        } catch (\Throwable $th) {
+            return ResponseHelper::error($th->getMessage());
+        }
+    }
+
 }
