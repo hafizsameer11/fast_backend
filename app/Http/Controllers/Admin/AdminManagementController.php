@@ -25,6 +25,7 @@ class AdminManagementController extends Controller
     }
     public function addUser(Request $request)
     {
+        return $request;
         try {
             $validatedData = $request->validate([
                 'name' => 'required|string|max:255',
