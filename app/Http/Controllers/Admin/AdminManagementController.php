@@ -23,10 +23,18 @@ class AdminManagementController extends Controller
             'inactive' => $inactive
         ], 200);
     }
-    public function addUser(AddUserRequest $request)
+    public function addUser($request)
     {
         try {
-            $validatedData = $request->validated();
+            $validatedData = $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|string|min:6',
+                'phone' => 'required|string|max:15',
+                'role' => 'required',
+                'is_active' => 'nullable|boolean',
+                'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
 
             // Hash the password
             $validatedData['password'] = bcrypt($validatedData['password']);
@@ -38,7 +46,7 @@ class AdminManagementController extends Controller
             }
             // add opt_verified
             $validatedData['otp_verified'] = 1;
-            $validatedData['is_active'] = 1;
+            $validatedData['is_active'] = $request->has('is_active') ? $request->input('is_active') : 1;
 
             // Create the user
             $user = User::create($validatedData);
@@ -51,6 +59,15 @@ class AdminManagementController extends Controller
     public function updateUser(Request $request, $id)
     {
         try {
+            $request->validate([
+                'name' => 'required|string|max:255',
+                'email' => 'required|email|unique:users,email,' . $id,
+                'phone' => 'required|string|max:15',
+                'role' => 'required',
+                'is_active' => 'nullable|boolean',
+                'password' => 'nullable|string|min:6',
+                'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
+            ]);
             $user = User::findOrFail($id);
 
             $data = $request->only([
@@ -58,12 +75,13 @@ class AdminManagementController extends Controller
                 'email',
                 'phone',
                 'role',
-                'is_active'
             ]);
 
             if ($request->filled('password')) {
                 $data['password'] = bcrypt($request->input('password'));
             }
+            $data['otp_verified'] = 1;
+            $data['is_active'] = $request->has('is_active') ? $request->input('is_active') : 1;
 
             if ($request->hasFile('profile_picture')) {
                 // Delete old profile picture if exists
