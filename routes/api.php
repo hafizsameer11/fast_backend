@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\RoleModuleController;
 use App\Http\Controllers\Admin\TransactionsManagementController;
 use App\Http\Controllers\Admin\UsermanagementController;
 use App\Http\Controllers\Api\HistoryController;
+use App\Http\Controllers\Api\LocationController;
 use App\Http\Controllers\ParcelBidController;
 use App\Http\Controllers\ParcelReviewController;
 use App\Http\Controllers\Rider\RiderVerificationController;
@@ -261,11 +262,16 @@ Route::middleware('auth:sanctum')->group(function () {
         });
 
         Route::prefix('admin-management')->group(function () {
-            Route::get('/',[AdminManagementController::class,'index']);
-            Route::post('/add-admin',[AdminManagementController::class,'addUser']);
+            Route::get('/', [AdminManagementController::class, 'index']);
+            Route::post('/add-admin', [AdminManagementController::class, 'addUser']);
         });
         Route::get('/earn-report', [BookingController::class, 'EarnReport']);
         Route::get('/reviews', [RatingController::class, 'index']);
+
+        Route::get('/locations', [LocationController::class, 'index']);          // Get all
+        Route::post('/locations/create', [LocationController::class, 'store']);
+        Route::put('/locations/update/{id}', [LocationController::class, 'update']);    // Update
+        Route::delete('/locations/delete/{id}', [LocationController::class, 'destroy']);
 
     });
     Route::get('booking-management', [BookingController::class, 'getBookingsData']);
