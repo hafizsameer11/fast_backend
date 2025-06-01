@@ -33,7 +33,7 @@ class BookingController extends Controller
     }
 
     public function EarnReport() {
-        $earnings =SendParcel::whereNotNull('payment_method')->where('status','delivered')->with('user', 'rider', 'acceptedBid')->latest()->get();
+        $earnings =SendParcel::whereNotNull('payment_method')->where('status','delivered')->with('user', 'rider', 'acceptedBid')->latest()->limit(10)->get();
         $data = [
             'totalRideCost' => 1400,
             'tolalAdminCommission' => 200,
