@@ -23,7 +23,7 @@ class AdminManagementController extends Controller
             'inactive' => $inactive
         ], 200);
     }
-    public function addUser($request)
+    public function addUser(Request $request)
     {
         try {
             $validatedData = $request->validate([
