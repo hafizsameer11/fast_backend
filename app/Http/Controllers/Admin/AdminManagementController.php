@@ -66,6 +66,10 @@ class AdminManagementController extends Controller
             }
 
             if ($request->hasFile('profile_picture')) {
+                // Delete old profile picture if exists
+                if ($user->profile_picture && \Storage::disk('public')->exists($user->profile_picture)) {
+                    \Storage::disk('public')->delete($user->profile_picture);
+                }
                 $file = $request->file('profile_picture');
                 $filePath = $file->store('profile_pictures', 'public');
                 $data['profile_picture'] = $filePath;
