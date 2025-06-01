@@ -62,7 +62,7 @@ class AdminManagementController extends Controller
         try {
             $request->validate([
                 'name' => 'required|string|max:255',
-                'email' => 'required|email|unique:users,email,' . $id,
+                'email' => ['required', 'email', 'unique:users,email,' . $id],
                 'phone' => 'required|string|max:15',
                 'role' => 'required',
                 'is_active' => 'nullable|boolean',
