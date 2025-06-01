@@ -16,6 +16,7 @@ use App\Http\Controllers\Api\LocationController;
 use App\Http\Controllers\ParcelBidController;
 use App\Http\Controllers\ParcelReviewController;
 use App\Http\Controllers\Rider\RiderVerificationController;
+use App\Http\Controllers\Admin\TierController;
 use App\Http\Controllers\TrackController;
 use App\Http\Controllers\User\AuthController;
 use App\Http\Controllers\Rider\AuthController as RiderAuthController;
@@ -267,6 +268,12 @@ Route::middleware('auth:sanctum')->group(function () {
         });
         Route::get('/earn-report', [BookingController::class, 'EarnReport']);
         Route::get('/reviews', [RatingController::class, 'index']);
+
+        Route::get('/tiers', [TierController::class, 'index']);
+        Route::post('/tiers/create', [TierController::class, 'store']);
+        Route::put('/tiers/update/{tier}', [TierController::class, 'update']);
+        Route::delete('/tiers/delete/{tier}', [TierController::class, 'destroy']);
+
 
         Route::get('/locations', [LocationController::class, 'index']);          // Get all
         Route::post('/locations/create', [LocationController::class, 'store']);
