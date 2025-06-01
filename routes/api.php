@@ -9,6 +9,7 @@ use App\Http\Controllers\Admin\BookingController;
 use App\Http\Controllers\Admin\RatingController;
 use App\Http\Controllers\Admin\RiderManagementController;
 use App\Http\Controllers\Admin\RoleModuleController;
+use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\TransactionsManagementController;
 use App\Http\Controllers\Admin\UsermanagementController;
 use App\Http\Controllers\Api\HistoryController;
@@ -273,6 +274,10 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/tiers/create', [TierController::class, 'store']);
         Route::put('/tiers/update/{tier}', [TierController::class, 'update']);
         Route::delete('/tiers/delete/{tier}', [TierController::class, 'destroy']);
+
+
+        Route::get('/settings', [SettingController::class, 'index']);
+        Route::post('/settings/upsert-multiple', [SettingController::class, 'upsertMultiple']);
 
 
         Route::get('/locations', [LocationController::class, 'index']);          // Get all
