@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\AdminManagementController;
 use App\Http\Controllers\Admin\AppBannerController;
 use App\Http\Controllers\Admin\AppNotificationController;
 use App\Http\Controllers\Admin\BookingController;
+use App\Http\Controllers\Admin\RatingController;
 use App\Http\Controllers\Admin\RiderManagementController;
 use App\Http\Controllers\Admin\RoleModuleController;
 use App\Http\Controllers\Admin\TransactionsManagementController;
@@ -263,6 +264,8 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::get('/',[AdminManagementController::class,'index']);
             Route::post('/add-admin',[AdminManagementController::class,'addUser']);
         });
+        Route::get('/earn-report', [BookingController::class, 'EarnReport']);
+        Route::get('/reviews', [RatingController::class, 'index']);
 
     });
     Route::get('booking-management', [BookingController::class, 'getBookingsData']);

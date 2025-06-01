@@ -31,5 +31,20 @@ class BookingController extends Controller
         ];
         return ResponseHelper::success($data, "Bookings data retrieved successfully");
     }
+
+    public function EarnReport() {
+        $earnings =SendParcel::whereNotNull('payment_method')->where('status','delivered')->with('user', 'rider', 'acceptedBid')->latest()->get();
+        $data = [
+            'totalRideCost' => 1400,
+            'tolalAdminCommission' => 200,
+            'totalRiderEarnings' => 1200,
+            'earnings' => $earnings,
+        ];
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Earnings report retrieved successfully',
+            'data' => $data,
+        ]);
+    }
     
 }
