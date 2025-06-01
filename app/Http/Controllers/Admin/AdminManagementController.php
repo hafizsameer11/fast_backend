@@ -60,46 +60,42 @@ class AdminManagementController extends Controller
     public function updateUser(Request $request, $id)
     {
         try {
-            $request->validate([
+            $user = User::findOrFail($id);
+
+            $validatedData = $request->validate([
                 'name' => 'required|string|max:255',
-                'email' => ['required', 'email', 'unique:users,email,' . $id],
+                'email' => 'required|email|unique:users,email,' . $user->id,
+                'password' => 'nullable|string|min:6',
                 'phone' => 'required|string|max:15',
                 'role' => 'required',
                 'is_active' => 'nullable|boolean',
-                'password' => 'nullable|string|min:6',
                 'profile_picture' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048',
             ]);
-            $user = User::findOrFail($id);
 
-            $data = $request->only([
-                'name',
-                'email',
-                'phone',
-                'role',
-            ]);
-
-            if ($request->filled('password')) {
-                $data['password'] = bcrypt($request->input('password'));
+            // Only hash and update password if provided
+            if (!empty($validatedData['password'])) {
+                $validatedData['password'] = bcrypt($validatedData['password']);
+            } else {
+                unset($validatedData['password']);
             }
-            $data['otp_verified'] = 1;
-            $data['is_active'] = $request->has('is_active') ? $request->input('is_active') : 1;
 
+            // Handle profile picture upload
             if ($request->hasFile('profile_picture')) {
-                // Delete old profile picture if exists
-                if ($user->profile_picture && \Storage::disk('public')->exists($user->profile_picture)) {
-                    \Storage::disk('public')->delete($user->profile_picture);
-                }
                 $file = $request->file('profile_picture');
                 $filePath = $file->store('profile_pictures', 'public');
-                $data['profile_picture'] = $filePath;
+                $validatedData['profile_picture'] = $filePath;
             }
 
-            $user->update($data);
+            // Update is_active value
+            $validatedData['is_active'] = $request->has('is_active') ? $request->input('is_active') : $user->is_active;
+
+            $user->update($validatedData);
 
             return ResponseHelper::success($user, 'User updated successfully');
         } catch (\Throwable $th) {
             return ResponseHelper::error($th->getMessage());
         }
     }
+
 
 }
