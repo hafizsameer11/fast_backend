@@ -12,7 +12,7 @@ use App\Http\Controllers\Admin\RoleModuleController;
 use App\Http\Controllers\Admin\TransactionsManagementController;
 use App\Http\Controllers\Admin\UsermanagementController;
 use App\Http\Controllers\Api\HistoryController;
-use App\Http\Controllers\Admin\LocationController;
+use App\Http\Controllers\Api\LocationController;
 use App\Http\Controllers\ParcelBidController;
 use App\Http\Controllers\ParcelReviewController;
 use App\Http\Controllers\Rider\RiderVerificationController;
