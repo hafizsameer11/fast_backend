@@ -9,15 +9,33 @@ use Illuminate\Http\Request;
 
 class RoleModuleController extends Controller
 {
-    public function rolesindex(){
+    public function rolesindex()
+    {
         $roles = Role::all();
         return response()->json($roles);
     }
-    public function index(){
-        $roles = Role::all();
+    public function index()
+    {
         $modules = Module::all();
+        $roles = Role::with('modules')->get();
+
+        $data = $roles->map(function ($role) use ($modules) {
+            $moduleStates = $modules->map(function ($module) use ($role) {
+                return [
+                    'module_id' => $module->id,
+                    'module_name' => $module->name,
+                    'has_permission' => $role->modules->contains($module->id)
+                ];
+            });
+
+            return [
+                'role_id' => $role->id,
+                'role_name' => $role->name,
+                'permissions' => $moduleStates
+            ];
+        });
         return response()->json([
-            'roles' => $roles,
+            'roles' => $data,
             'modules' => $modules
         ]);
     }
