@@ -12,6 +12,15 @@ class AnalyticController extends Controller
 {
     public function dashboard()
     {
+
+        $users = User::get();
+        $totalUsers = $users->count();
+        $totalRider = $users->where('role', 'rider')->count();
+        $totalActiveRider = $users->where('is_active', 1)->count();
+        $revenue = SendParcel::sum('amount');
+
+
+
         // Get monthly sendParcel count and earnings for the current year
         $monthlySendParcel = [];
         $monthlyEarnings = [];
@@ -53,6 +62,12 @@ class AnalyticController extends Controller
             ->get();
         // Example return (customize as needed)
         return response()->json([
+            'site' => [
+                'totalUsers' => $totalUsers,
+                'totalRider' => $totalRider,
+                'totalActiveRider' => $totalActiveRider,
+                'revenue' => $revenue,
+            ],
             'monthlySendParcel' => $monthlySendParcel,
             'monthlyEarnings' => $monthlyEarnings,
             'currentMonthStatusCounts' => $currentMonthStatusCounts,
