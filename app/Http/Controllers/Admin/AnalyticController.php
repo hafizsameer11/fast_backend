@@ -55,14 +55,11 @@ class AnalyticController extends Controller
         }
 
         // Current month sendParcel status counts
-        $statuses = ['delivered', 'canceled', 'in_transit'];
-        $currentMonthStatusCounts = [];
-        foreach ($statuses as $status) {
-            $currentMonthStatusCounts[$status] = SendParcel::where('status', $status)
-            ->whereMonth('created_at', now()->month)
-            ->whereYear('created_at', now()->year)
-            ->count();
-        }
+        $currentMonthStatusCounts = [
+            SendParcel::whereNotNull('payment_method')->where('status','delivered')->count(),
+            SendParcel::whereNotNull('payment_method')->where('status','is_transit')->count(),
+            SendParcel::whereNotNull('payment_method')->where('status','ordered')->count(),
+        ]; 
         $bookings = SendParcel::whereNotNull('payment_method')
             ->with('user', 'rider', 'acceptedBid')
             ->latest()
