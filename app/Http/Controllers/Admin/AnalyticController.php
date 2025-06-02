@@ -193,7 +193,7 @@ class AnalyticController extends Controller
                 ],
                 [
                     "name" => 'Total Canceled Orders',
-                    "value" => SendParcel::whereNotNull('payment_method')->where('status', 'canceled')->count(),,
+                    "value" => SendParcel::whereNotNull('payment_method')->where('status', 'canceled')->count(),
                 ],
                 [
                     "name" => 'Average Order Value',
@@ -205,8 +205,6 @@ class AnalyticController extends Controller
                 ],
             ]
         ]);
-
-    
     }
 
 
