@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ParcelReview;
 use App\Models\SendParcel;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -296,6 +297,31 @@ class AnalyticController extends Controller
                 [
                     "name" => 'Total Revenue',
                     "value" => SendParcel::whereNotNull('payment_method')->where('status', 'delivered')->sum('amount'),
+                ],
+            ]
+        ]);
+
+    }
+    public function CustomerAnalytics()
+    {
+
+        return response()->json([
+            "cardData" => [
+                [
+                    "name" => 'Total Reviews',
+                    "value" => ParcelReview::count(),
+                ],
+                [
+                    "name" => 'Total Good Review',
+                    "value" => ParcelReview::where('rating', '>=', 4)->count(),
+                ],
+                [
+                    "name" => 'Total Bad Review',
+                    "value" => ParcelReview::where('rating', '<', 3)->count(),
+                ],
+                [
+                    "name" => 'Total Neutral Review',
+                    "value" => ParcelReview::where('rating', 3)->count(),
                 ],
             ]
         ]);

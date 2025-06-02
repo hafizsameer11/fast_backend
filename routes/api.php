@@ -294,6 +294,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/analytics/OrderAnalytics', [AnalyticController::class, 'OrderAnalytics']);          // Get all
         Route::get('/analytics/RiderAnalytics', [AnalyticController::class, 'RiderAnalytics']);          // Get all
         Route::get('/analytics/RevenueAnalytics', [AnalyticController::class, 'RevenueAnalytics']);          // Get all
+        Route::get('/analytics/CustomerAnalytics', [AnalyticController::class, 'CustomerAnalytics']);          // Get all
 
 
 
