@@ -3,51 +3,61 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\SendParcel;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
 
 class AnalyticController extends Controller
 {
-    public function UserAnalytics()
+    public function dashboard()
     {
-        $users = User::with('sendParcel')->get();
-        $monthlyEarnings = array_fill(0, 12, 0); // index 0 = Jan
-        $monthlyRides = array_fill(0, 12, 0);
+        // Get monthly sendParcel count and earnings for the current year
+        $monthlySendParcel = [];
+        $monthlyEarnings = [];
 
-        foreach ($users as $user) {
-            foreach ($user->sendParcel as $parcel) {
-                $month = Carbon::parse($parcel->created_at)->month - 1; // 0-based index
-                $monthlyRides[$month]++;
-                $monthlyEarnings[$month] += $parcel->price ?? 0; // Use actual field name
-            }
+        for ($month = 1; $month <= 12; $month++) {
+            $count = User::whereHas('sendParcel', function ($query) use ($month) {
+            $query->whereMonth('created_at', $month)
+                  ->whereYear('created_at', now()->year);
+            })->with(['sendParcel' => function ($query) use ($month) {
+            $query->whereMonth('created_at', $month)
+                  ->whereYear('created_at', now()->year);
+            }])->get()->pluck('sendParcel')->flatten()->count();
+
+            $earning = User::whereHas('sendParcel', function ($query) use ($month) {
+            $query->whereMonth('created_at', $month)
+                  ->whereYear('created_at', now()->year);
+            })->with(['sendParcel' => function ($query) use ($month) {
+            $query->whereMonth('created_at', $month)
+                  ->whereYear('created_at', now()->year);
+            }])->get()->pluck('sendParcel')->flatten()->sum('amount'); // assuming 'amount' is the earning field
+
+            $monthlySendParcel[] = $count;
+            $monthlyEarnings[] = $earning;
         }
 
-        // Pie chart counts
-        $completed = 0;
-        $active = 0;
-        $scheduled = 0;
-
-        foreach ($users as $user) {
-            foreach ($user->sendParcel as $parcel) {
-                switch ($parcel->status) {
-                    case 'delivered':
-                        $completed++;
-                        break;
-                    case 'in_transit':
-                        $active++;
-                        break;
-                    case 'cancelled':
-                        $scheduled++;
-                        break;
-                }
-            }
+        // Current month sendParcel status counts
+        $statuses = ['delivered', 'canceled', 'in_transit'];
+        $currentMonthStatusCounts = [];
+        foreach ($statuses as $status) {
+            $currentMonthStatusCounts[$status] = SendParcel::where('status', $status)
+            ->whereMonth('created_at', now()->month)
+            ->whereYear('created_at', now()->year)
+            ->count();
         }
-
+        $bookings = SendParcel::whereNotNull('payment_method')
+            ->with('user', 'rider', 'acceptedBid')
+            ->latest()
+            ->take(5)
+            ->get();
+        // Example return (customize as needed)
         return response()->json([
-            'monthlyrides' => $monthlyRides,
-            'piegraphs' => [$completed, $active, $scheduled],
-
+            'monthlySendParcel' => $monthlySendParcel,
+            'monthlyEarnings' => $monthlyEarnings,
+            'currentMonthStatusCounts' => $currentMonthStatusCounts,
+            'bookings' => $bookings,
         ]);
+
     }
 }

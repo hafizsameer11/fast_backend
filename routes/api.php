@@ -3,6 +3,7 @@
 // use App\Http\Controllers\Rider\AuthController;
 
 use App\Http\Controllers\Admin\AdminManagementController;
+use App\Http\Controllers\Admin\AnalyticController;
 use App\Http\Controllers\Admin\AppBannerController;
 use App\Http\Controllers\Admin\AppNotificationController;
 use App\Http\Controllers\Admin\BookingController;
@@ -285,6 +286,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/locations/create', [LocationController::class, 'store']);
         Route::put('/locations/update/{id}', [LocationController::class, 'update']);    // Update
         Route::delete('/locations/delete/{id}', [LocationController::class, 'destroy']);
+        
+        Route::get('/dashboard', [AnalyticController::class, 'dashboard']);          // Get all
+
+
+
 
     });
     Route::get('booking-management', [BookingController::class, 'getBookingsData']);
