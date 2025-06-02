@@ -105,7 +105,8 @@ class AdminManagementController extends Controller
         $user->is_active = ($user->is_active != 3) ? 3 : 1;
         $user->save();
 
-        return ResponseHelper::success($user, 'User blocked successfully');
+        $message = ($user->is_active == 3) ? 'User blocked successfully' : 'User unblocked successfully';
+        return ResponseHelper::success($user, $message);
     }
 
 
