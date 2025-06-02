@@ -284,7 +284,7 @@ class AnalyticController extends Controller
         // Monthly number array of users created in the current year
         $monthlyUserCreated = [];
         for ($month = 1; $month <= 12; $month++) {
-            $amount = SendParcel::whereYear('created_at', now()->year)
+            $amount = SendParcel::whereNotNull('payment_method')->whereYear('created_at', now()->year)
             ->whereMonth('created_at', $month)
             ->sum('amount');
             $monthlyUserCreated[] = $amount;
