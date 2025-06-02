@@ -289,7 +289,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/locations/delete/{id}', [LocationController::class, 'destroy']);
         
         Route::get('/dashboard', [AnalyticController::class, 'dashboard']);          // Get all
-
+        
+        Route::get('/analytics/UserAnalytics', [AnalyticController::class, 'UserAnalytics']);          // Get all
 
 
 
