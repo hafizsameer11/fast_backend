@@ -119,23 +119,23 @@ class AnalyticController extends Controller
             "cardData" => [
                 [
                     "name" => 'Total Users',
-                    "value" => $usersQuery->count(),
+                    "value" => $usersQuery->where('role','user')->count(),
                 ],
                 [
                     "name" => 'Total Active Users',
-                    "value" => $usersQuery->where('is_active', 1)->count(),
+                    "value" => $usersQuery->where('is_active', 1)->where('role','user')->count(),
                 ],
                 [
                     "name" => 'Total Inactive Users',
-                    "value" => $usersQuery->where('is_active', 0)->count(),
+                    "value" => $usersQuery->where('is_active', 0)->where('role','user')->count(),
                 ],
                 [
                     "name" => 'Total Block Users',
-                    "value" => $usersQuery->where('is_active', 3)->count(),
+                    "value" => $usersQuery->where('is_active', 3)->where('role','user')->count(),
                 ],
                 [
                     "name" => 'Total New Users',
-                    "value" => User::where('is_active', 1)
+                    "value" => User::where('is_active', 1)->where('role','user')
                         ->where(function ($query) {
                             $query->whereDate('created_at', Carbon::today())
                                 ->orWhereDate('created_at', Carbon::yesterday());
@@ -147,7 +147,7 @@ class AnalyticController extends Controller
                     "value" => User::whereHas('sendParcel', function ($query) use ($startDate, $endDate) {
                             $query->whereBetween('created_at', [$startDate, $endDate])
                                 ->whereRaw('created_at = (SELECT MAX(created_at) FROM send_parcels WHERE user_id = users.id)');
-                        })
+                        })->where('role','user')
                         ->count(),
                 ],
                 [
@@ -155,7 +155,7 @@ class AnalyticController extends Controller
                     "value" => User::whereHas('sendParcel', function ($query) use ($LeavestartDate, $LeaveendDate) {
                             $query->whereBetween('created_at', [$LeavestartDate, $LeaveendDate])
                                 ->whereRaw('created_at = (SELECT MAX(created_at) FROM send_parcels WHERE user_id = users.id)');
-                        })
+                        })->where('role','user')
                         ->count(),
                 ],
             ]
