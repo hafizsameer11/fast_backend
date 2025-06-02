@@ -164,5 +164,51 @@ class AnalyticController extends Controller
     }
 
 
+    public function OrderAnalytics()
+    {
+        // Monthly number array of users created in the current year
+        $monthlyUserCreated = [];
+        for ($month = 1; $month <= 12; $month++) {
+            $count = SendParcel::whereNotNull('payment_method')->whereYear('created_at', now()->year)
+                ->whereMonth('created_at', $month)
+                ->count();
+            $monthlyUserCreated[] = $count;
+        }
+        $pieData = [
+            SendParcel::whereNotNull('payment_method')->count(),
+            SendParcel::whereNotNull('payment_method')->where('status', 'delivered')->count(),
+            SendParcel::whereNotNull('payment_method')->where('status', 'canceled')->count(),
+        ];
+        return response()->json([
+            'monthlyUserCreated' => $monthlyUserCreated,
+            'preData' => $pieData,
+            "cardData" => [
+                [
+                    "name" => 'Total Orders',
+                    "value" => SendParcel::whereNotNull('payment_method')->count(),
+                ],
+                [
+                    "name" => 'Total Delivered Orders',
+                    "value" => SendParcel::whereNotNull('payment_method')->where('status', 'delivered')->count(),
+                ],
+                [
+                    "name" => 'Total Canceled Orders',
+                    "value" => SendParcel::whereNotNull('payment_method')->where('status', 'canceled')->count(),,
+                ],
+                [
+                    "name" => 'Average Order Value',
+                    "value" => SendParcel::whereNotNull('payment_method')->avg('amount'),
+                ],
+                [
+                    "name" => 'Average Delivery Fee',
+                    "value" => SendParcel::whereNotNull('payment_method')->avg('delivery_fee'),
+                ],
+            ]
+        ]);
+
+    
+    }
+
+
 
 }
