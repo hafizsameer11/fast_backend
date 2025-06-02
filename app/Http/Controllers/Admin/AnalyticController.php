@@ -98,7 +98,7 @@ class AnalyticController extends Controller
         $monthlyUserCreated = [];
         for ($month = 1; $month <= 12; $month++) {
             $count = User::whereYear('created_at', now()->year)
-                ->whereMonth('created_at', $month)
+                ->whereMonth('created_at', $month)->where('role','user')
                 ->count();
             $monthlyUserCreated[] = $count;
         }
@@ -207,6 +207,77 @@ class AnalyticController extends Controller
         ]);
     }
 
+    public function RiderAnalytics()
+    {
+        $usersQuery = User::get();
+        // Monthly number array of users created in the current year
+        $monthlyUserCreated = [];
+        for ($month = 1; $month <= 12; $month++) {
+            $count = User::whereYear('created_at', now()->year)
+                ->whereMonth('created_at', $month)->where('role','rider')
+                ->count();
+            $monthlyUserCreated[] = $count;
+        }
+        $pieData = [
+            $usersQuery->where('role','rider')->count(),
+            $usersQuery->where('role','rider')->where('is_active', 1)->count(),
+            $usersQuery->where('role','rider')->where('is_active', 0)->count()
+        ];
+        $startDate = Carbon::now()->subMonths(2)->startOfMonth();
+        $endDate = Carbon::now()->subMonths(2)->endOfMonth();
+        
+        $LeavestartDate = Carbon::now()->subMonths(12)->startOfMonth();
+        $LeaveendDate = Carbon::now()->subMonths(12)->endOfMonth();
+
+        return response()->json([
+            'monthlyUserCreated' => $monthlyUserCreated,
+            'preData' => $pieData,
+            "cardData" => [
+                [
+                    "name" => 'Total Rider',
+                    "value" => $usersQuery->where('rider','user')->count(),
+                ],
+                [
+                    "name" => 'Total Active Rider',
+                    "value" => $usersQuery->where('is_active', 1)->where('role','rider')->count(),
+                ],
+                [
+                    "name" => 'Total Inactive Rider',
+                    "value" => $usersQuery->where('is_active', 0)->where('role','rider')->count(),
+                ],
+                [
+                    "name" => 'Total Block Rider',
+                    "value" => $usersQuery->where('is_active', 3)->where('role','rider')->count(),
+                ],
+                [
+                    "name" => 'Total New Users',
+                    "value" => User::where('is_active', 1)->where('role','rider')
+                        ->where(function ($query) {
+                            $query->whereDate('created_at', Carbon::today())
+                                ->orWhereDate('created_at', Carbon::yesterday());
+                        })
+                        ->count(),
+                ],
+                [
+                    "name" => 'Churn Rate',
+                    "value" => User::whereHas('sendParcel', function ($query) use ($startDate, $endDate) {
+                            $query->whereBetween('created_at', [$startDate, $endDate])
+                                ->whereRaw('created_at = (SELECT MAX(created_at) FROM send_parcels WHERE user_id = users.id)');
+                        })->where('role','rider')
+                        ->count(),
+                ],
+                [
+                    "name" => 'Retention Rate',
+                    "value" => User::whereHas('sendParcel', function ($query) use ($LeavestartDate, $LeaveendDate) {
+                            $query->whereBetween('created_at', [$LeavestartDate, $LeaveendDate])
+                                ->whereRaw('created_at = (SELECT MAX(created_at) FROM send_parcels WHERE user_id = users.id)');
+                        })->where('role','rider')
+                        ->count(),
+                ],
+            ]
+        ]);
+
+    }
 
 
 }

@@ -292,6 +292,7 @@ Route::middleware('auth:sanctum')->group(function () {
         
         Route::get('/analytics/UserAnalytics', [AnalyticController::class, 'UserAnalytics']);          // Get all
         Route::get('/analytics/OrderAnalytics', [AnalyticController::class, 'OrderAnalytics']);          // Get all
+        Route::get('/analytics/RiderAnalytics', [AnalyticController::class, 'RiderAnalytics']);          // Get all
 
 
 
