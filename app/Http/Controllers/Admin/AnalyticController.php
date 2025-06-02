@@ -135,8 +135,7 @@ class AnalyticController extends Controller
                 ],
                 [
                     "name" => 'Total New Users',
-                    "value" => $usersQuery
-                        ->where('is_active', 1)
+                    "value" => User::where('is_active', 1)
                         ->where(function ($query) {
                             $query->whereDate('created_at', Carbon::today())
                                 ->orWhereDate('created_at', Carbon::yesterday());
