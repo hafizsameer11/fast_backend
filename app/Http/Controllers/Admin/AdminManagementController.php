@@ -97,5 +97,16 @@ class AdminManagementController extends Controller
         }
     }
 
+    public function blockUser($id) {
+        $user = User::find($id);
+        if(!$user) {
+            return ResponseHelper::error('User is not found');
+        }
+        $user->is_active = ($user->is_active != 3) ? 3 : 1;
+        $user->save();
+
+        return ResponseHelper::success($user, 'User blocked successfully');
+    }
+
 
 }
