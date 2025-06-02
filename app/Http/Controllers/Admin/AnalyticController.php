@@ -19,6 +19,14 @@ class AnalyticController extends Controller
         $totalActiveRider = $users->where('is_active', 1)->count();
         $revenue = SendParcel::sum('amount');
 
+        $ridesQuery = SendParcel::whereNotNull('payment_method')
+            ->where('status', 'delivered')
+            ->with('user', 'rider', 'acceptedBid');
+        $totaldelivered = $ridesQuery->where('status','delivered')->count();
+        $totalActive = $ridesQuery->where('status','in_transit')->count();
+        $totalscheduled = $ridesQuery->where('status','ordered')->count();
+        $totalpickup = $ridesQuery->where('status','picked_up')->count();
+
 
 
         // Get monthly sendParcel count and earnings for the current year
@@ -68,6 +76,12 @@ class AnalyticController extends Controller
                 'totalActiveRider' => $totalActiveRider,
                 'revenue' => $revenue,
             ],
+            "rides" => [
+                'totaldelivered' => $totaldelivered,
+                'totalActive' => $totalActive,
+                'totalscheduled' => $totalscheduled,
+                'totalpickup' => $totalpickup,
+            ], 
             'monthlySendParcel' => $monthlySendParcel,
             'monthlyEarnings' => $monthlyEarnings,
             'currentMonthStatusCounts' => $currentMonthStatusCounts,
