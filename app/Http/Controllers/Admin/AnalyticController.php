@@ -145,8 +145,7 @@ class AnalyticController extends Controller
                 ],
                 [
                     "name" => 'Churn Rate',
-                    "value" => $usersQuery
-                        ->whereHas('sendParcel', function ($query) use ($startDate, $endDate) {
+                    "value" => User::whereHas('sendParcel', function ($query) use ($startDate, $endDate) {
                             $query->whereBetween('created_at', [$startDate, $endDate])
                                 ->whereRaw('created_at = (SELECT MAX(created_at) FROM send_parcels WHERE user_id = users.id)');
                         })
@@ -154,8 +153,7 @@ class AnalyticController extends Controller
                 ],
                 [
                     "name" => 'Retention Rate',
-                    "value" => $usersQuery
-                        ->whereHas('sendParcel', function ($query) use ($LeavestartDate, $LeaveendDate) {
+                    "value" => User::whereHas('sendParcel', function ($query) use ($LeavestartDate, $LeaveendDate) {
                             $query->whereBetween('created_at', [$LeavestartDate, $LeaveendDate])
                                 ->whereRaw('created_at = (SELECT MAX(created_at) FROM send_parcels WHERE user_id = users.id)');
                         })
