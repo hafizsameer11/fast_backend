@@ -103,9 +103,9 @@ class AnalyticController extends Controller
             $monthlyUserCreated[] = $count;
         }
         $pieData = [
-            $usersQuery->count(),
-            $usersQuery->where('is_active', 1)->count(),
-            $usersQuery->where('is_active', 0)->count()
+            $usersQuery->where('role','user')->count(),
+            $usersQuery->where('role','user')->where('is_active', 1)->count(),
+            $usersQuery->where('role','user')->where('is_active', 0)->count()
         ];
         $startDate = Carbon::now()->subMonths(2)->startOfMonth();
         $endDate = Carbon::now()->subMonths(2)->endOfMonth();
