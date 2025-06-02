@@ -327,6 +327,24 @@ class AnalyticController extends Controller
         ]);
 
     }
+    public function MostOrderedFromAnalytics()
+    {
+
+        return response()->json([
+            "cardData" => [
+                [
+                    "name" => 'Most order place from',
+                    "value" => SendParcel::select('pickup_location')
+                        ->groupBy('pickup_location')
+                        ->orderByRaw('COUNT(*) DESC')
+                        ->limit(1)
+                        ->pluck('pickup_location')
+                        ->first(),
+                ],
+            ]
+        ]);
+
+    }
 
 
 }
