@@ -269,7 +269,7 @@ Route::middleware('auth:sanctum')->group(function () {
             Route::post('/add-admin', [AdminManagementController::class, 'addUser']);
             Route::post('/update-admin/{id}', [AdminManagementController::class, 'updateUser']);
         });
-        Route::post('/block-user', [AdminManagementController::class, 'blockUser']);
+        Route::post('/block-user/{id}', [AdminManagementController::class, 'blockUser']);
         Route::get('/earn-report', [BookingController::class, 'EarnReport']);
         Route::get('/reviews', [RatingController::class, 'index']);
 
