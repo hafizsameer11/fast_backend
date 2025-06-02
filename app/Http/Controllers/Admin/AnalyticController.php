@@ -236,7 +236,7 @@ class AnalyticController extends Controller
             "cardData" => [
                 [
                     "name" => 'Total Rider',
-                    "value" => $usersQuery->where('rider', 'rider')->count(),
+                    "value" => $usersQuery->where('role', 'rider')->count(),
                 ],
                 [
                     "name" => 'Total Active Rider',
