@@ -98,18 +98,18 @@ class AnalyticController extends Controller
         $monthlyUserCreated = [];
         for ($month = 1; $month <= 12; $month++) {
             $count = User::whereYear('created_at', now()->year)
-                ->whereMonth('created_at', $month)->where('role','user')
+                ->whereMonth('created_at', $month)->where('role', 'user')
                 ->count();
             $monthlyUserCreated[] = $count;
         }
         $pieData = [
-            $usersQuery->where('role','user')->count(),
-            $usersQuery->where('role','user')->where('is_active', 1)->count(),
-            $usersQuery->where('role','user')->where('is_active', 0)->count()
+            $usersQuery->where('role', 'user')->count(),
+            $usersQuery->where('role', 'user')->where('is_active', 1)->count(),
+            $usersQuery->where('role', 'user')->where('is_active', 0)->count()
         ];
         $startDate = Carbon::now()->subMonths(2)->startOfMonth();
         $endDate = Carbon::now()->subMonths(2)->endOfMonth();
-        
+
         $LeavestartDate = Carbon::now()->subMonths(12)->startOfMonth();
         $LeaveendDate = Carbon::now()->subMonths(12)->endOfMonth();
 
@@ -119,23 +119,23 @@ class AnalyticController extends Controller
             "cardData" => [
                 [
                     "name" => 'Total Users',
-                    "value" => $usersQuery->where('role','user')->count(),
+                    "value" => $usersQuery->where('role', 'user')->count(),
                 ],
                 [
                     "name" => 'Total Active Users',
-                    "value" => $usersQuery->where('is_active', 1)->where('role','user')->count(),
+                    "value" => $usersQuery->where('is_active', 1)->where('role', 'user')->count(),
                 ],
                 [
                     "name" => 'Total Inactive Users',
-                    "value" => $usersQuery->where('is_active', 0)->where('role','user')->count(),
+                    "value" => $usersQuery->where('is_active', 0)->where('role', 'user')->count(),
                 ],
                 [
                     "name" => 'Total Block Users',
-                    "value" => $usersQuery->where('is_active', 3)->where('role','user')->count(),
+                    "value" => $usersQuery->where('is_active', 3)->where('role', 'user')->count(),
                 ],
                 [
                     "name" => 'Total New Users',
-                    "value" => User::where('is_active', 1)->where('role','user')
+                    "value" => User::where('is_active', 1)->where('role', 'user')
                         ->where(function ($query) {
                             $query->whereDate('created_at', Carbon::today())
                                 ->orWhereDate('created_at', Carbon::yesterday());
@@ -145,17 +145,17 @@ class AnalyticController extends Controller
                 [
                     "name" => 'Churn Rate',
                     "value" => User::whereHas('sendParcel', function ($query) use ($startDate, $endDate) {
-                            $query->whereBetween('created_at', [$startDate, $endDate])
-                                ->whereRaw('created_at = (SELECT MAX(created_at) FROM send_parcels WHERE user_id = users.id)');
-                        })->where('role','user')
+                        $query->whereBetween('created_at', [$startDate, $endDate])
+                            ->whereRaw('created_at = (SELECT MAX(created_at) FROM send_parcels WHERE user_id = users.id)');
+                    })->where('role', 'user')
                         ->count(),
                 ],
                 [
                     "name" => 'Retention Rate',
                     "value" => User::whereHas('sendParcel', function ($query) use ($LeavestartDate, $LeaveendDate) {
-                            $query->whereBetween('created_at', [$LeavestartDate, $LeaveendDate])
-                                ->whereRaw('created_at = (SELECT MAX(created_at) FROM send_parcels WHERE user_id = users.id)');
-                        })->where('role','user')
+                        $query->whereBetween('created_at', [$LeavestartDate, $LeaveendDate])
+                            ->whereRaw('created_at = (SELECT MAX(created_at) FROM send_parcels WHERE user_id = users.id)');
+                    })->where('role', 'user')
                         ->count(),
                 ],
             ]
@@ -214,18 +214,18 @@ class AnalyticController extends Controller
         $monthlyUserCreated = [];
         for ($month = 1; $month <= 12; $month++) {
             $count = User::whereYear('created_at', now()->year)
-                ->whereMonth('created_at', $month)->where('role','rider')
+                ->whereMonth('created_at', $month)->where('role', 'rider')
                 ->count();
             $monthlyUserCreated[] = $count;
         }
         $pieData = [
-            $usersQuery->where('role','rider')->count(),
-            $usersQuery->where('role','rider')->where('is_active', 1)->count(),
-            $usersQuery->where('role','rider')->where('is_active', 0)->count()
+            $usersQuery->where('role', 'rider')->count(),
+            $usersQuery->where('role', 'rider')->where('is_active', 1)->count(),
+            $usersQuery->where('role', 'rider')->where('is_active', 0)->count()
         ];
         $startDate = Carbon::now()->subMonths(2)->startOfMonth();
         $endDate = Carbon::now()->subMonths(2)->endOfMonth();
-        
+
         $LeavestartDate = Carbon::now()->subMonths(12)->startOfMonth();
         $LeaveendDate = Carbon::now()->subMonths(12)->endOfMonth();
 
@@ -235,23 +235,23 @@ class AnalyticController extends Controller
             "cardData" => [
                 [
                     "name" => 'Total Rider',
-                    "value" => $usersQuery->where('rider','user')->count(),
+                    "value" => $usersQuery->where('rider', 'rider')->count(),
                 ],
                 [
                     "name" => 'Total Active Rider',
-                    "value" => $usersQuery->where('is_active', 1)->where('role','rider')->count(),
+                    "value" => $usersQuery->where('is_active', 1)->where('role', 'rider')->count(),
                 ],
                 [
                     "name" => 'Total Inactive Rider',
-                    "value" => $usersQuery->where('is_active', 0)->where('role','rider')->count(),
+                    "value" => $usersQuery->where('is_active', 0)->where('role', 'rider')->count(),
                 ],
                 [
                     "name" => 'Total Block Rider',
-                    "value" => $usersQuery->where('is_active', 3)->where('role','rider')->count(),
+                    "value" => $usersQuery->where('is_active', 3)->where('role', 'rider')->count(),
                 ],
                 [
                     "name" => 'Total New Users',
-                    "value" => User::where('is_active', 1)->where('role','rider')
+                    "value" => User::where('is_active', 1)->where('role', 'rider')
                         ->where(function ($query) {
                             $query->whereDate('created_at', Carbon::today())
                                 ->orWhereDate('created_at', Carbon::yesterday());
@@ -261,18 +261,41 @@ class AnalyticController extends Controller
                 [
                     "name" => 'Churn Rate',
                     "value" => User::whereHas('sendParcel', function ($query) use ($startDate, $endDate) {
-                            $query->whereBetween('created_at', [$startDate, $endDate])
-                                ->whereRaw('created_at = (SELECT MAX(created_at) FROM send_parcels WHERE user_id = users.id)');
-                        })->where('role','rider')
+                        $query->whereBetween('created_at', [$startDate, $endDate])
+                            ->whereRaw('created_at = (SELECT MAX(created_at) FROM send_parcels WHERE user_id = users.id)');
+                    })->where('role', 'rider')
                         ->count(),
                 ],
                 [
                     "name" => 'Retention Rate',
                     "value" => User::whereHas('sendParcel', function ($query) use ($LeavestartDate, $LeaveendDate) {
-                            $query->whereBetween('created_at', [$LeavestartDate, $LeaveendDate])
-                                ->whereRaw('created_at = (SELECT MAX(created_at) FROM send_parcels WHERE user_id = users.id)');
-                        })->where('role','rider')
+                        $query->whereBetween('created_at', [$LeavestartDate, $LeaveendDate])
+                            ->whereRaw('created_at = (SELECT MAX(created_at) FROM send_parcels WHERE user_id = users.id)');
+                    })->where('role', 'rider')
                         ->count(),
+                ],
+            ]
+        ]);
+
+    }
+
+    public function RevenueAnalytics()
+    {
+        // Monthly number array of users created in the current year
+        $monthlyUserCreated = [];
+        for ($month = 1; $month <= 12; $month++) {
+            $amount = SendParcel::whereYear('created_at', now()->year)
+            ->whereMonth('created_at', $month)
+            ->sum('amount');
+            $monthlyUserCreated[] = $amount;
+        }
+
+        return response()->json([
+            'monthlyUserCreated' => $monthlyUserCreated,
+            "cardData" => [
+                [
+                    "name" => 'Total Revenue',
+                    "value" => SendParcel::whereNotNull('payment_method')->where('status', 'delivered')->sum('amount'),
                 ],
             ]
         ]);
