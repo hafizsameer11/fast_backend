@@ -47,7 +47,7 @@ class ParcelBidService
         $parcel->rider_id = $bid->rider_id;
         $parcel->accepted_bid_id = $bid->id;
         $parcel->is_assigned = true;
-        $parcel->status = 'picked_up';
+        $parcel->status = 'ordered';
         $parcel->picked_up_at = now();
 
         if (!$parcel->pickup_code) {
@@ -81,7 +81,7 @@ class ParcelBidService
         $parcel->rider_id = auth()->id();
         $parcel->accepted_bid_id = $bid->id;
         $parcel->is_assigned = true;
-        $parcel->status = 'picked_up';
+        $parcel->status = 'ordered';
         $parcel->picked_up_at = now();
         $parcel->save();
 
