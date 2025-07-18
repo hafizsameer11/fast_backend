@@ -67,6 +67,8 @@ class SendParcelController extends Controller
     public function stepThree(StepThreeRequest $request, $id)
     {
         $parcel = $this->sendParcelService->update($id, $request->validated());
+        $parcel['delivery_fee_n'] = rand(1500, 5000);
+
         return ResponseHelper::success($parcel, 'Step 3 completed');
     }
 
