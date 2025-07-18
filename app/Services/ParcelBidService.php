@@ -6,6 +6,7 @@ use App\Models\RiderLocation;
 use App\Repositories\ParcelBidRepository;
 use App\Models\SendParcel;
 use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\Log;
 
 class ParcelBidService
 {
@@ -20,7 +21,7 @@ class ParcelBidService
 
     public function createBid(array $data)
     {
-        \Log::info('Creating Rider Bid:', $data);
+        Log::info('Creating Rider Bid:', $data);
         return $this->repo->create($data);
     }
 
