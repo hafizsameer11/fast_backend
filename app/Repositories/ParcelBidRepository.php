@@ -98,9 +98,13 @@ class ParcelBidRepository
 
         $parcel = SendParcel::where('id', $parcelId)
             ->first();
+            $userBid=ParcelBid::where('send_parcel_id', $parcelId)
+            ->where('created_by', 'user') // ✅ filters only user-created bids
+            ->first();
 
         return [
             'bids' => $bids,
+            'userBid' => $userBid,
             'parcel' => $parcel,
         ];
     }
