@@ -14,6 +14,7 @@ class ParcelBid extends Model
         'message',
         'status',
         'created_by',
+        'required_time',
     ];
     
 
