@@ -83,6 +83,7 @@ class SendParcelController extends Controller
         $data['delivery_code'] = rand(1000, 9999);
 
         $parcel = $this->sendParcelService->update($id, $data, $step = 4);
+        $parcel['delivery_fee']='2500';
         return ResponseHelper::success($parcel, 'Parcel finalized and sent');
     }
 
