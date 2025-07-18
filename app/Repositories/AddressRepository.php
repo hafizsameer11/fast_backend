@@ -1,12 +1,16 @@
 <?php
 
 namespace App\Repositories;
+
 use App\Models\Address;
+use Illuminate\Support\Facades\Auth;
+
 class AddressRepository
 {
     public function all()
     {
-        return Address::all(); // Fetches all addresses from the database
+        $user = Auth::user();
+        return Address::where('user_id', $user->id)->get(); // Fetches all addresses from the database
     }
 
     public function find($id)
