@@ -17,6 +17,14 @@ class ParcelBidRepository
     {
         return ParcelBid::with('parcel')->findOrFail($id);
     }
+
+
+    public function create(array $data)
+    {
+        $parcelId = $data['send_parcel_id'];
+        return ParcelBid::create($data);
+    }
+
     private function calculateMiles($lat1, $lon1, $lat2, $lon2): float
     {
         $earthRadius = 3958.8; // miles
@@ -38,42 +46,40 @@ class ParcelBidRepository
         return $earthRadius * $c;
     }
 
+    public function createRider(array $data)
+    {
+        $parcelId = $data['send_parcel_id'];
+        $parcel = SendParcel::findOrFail($parcelId);
+        $rider = Auth::user();
 
-  public function create(array $data)
-{
-    $parcelId = $data['send_parcel_id'];
-    $parcel = SendParcel::findOrFail($parcelId);
-    $user = Auth::user();
-
-    // Only calculate distance & time if user is a rider
-    if ($user->role === 'rider') {
         // Get rider's latest location
-        $riderLocation = RiderLocation::where('rider_id', $user->id)
+        $riderLocation = RiderLocation::where('rider_id', $rider->id)
             ->orderBy('created_at', 'desc')
             ->first();
 
-        if ($riderLocation) {
-            // Calculate distance
-            $miles = $this->calculateMiles(
-                $parcel->sender_lat,
-                $parcel->sender_long,
-                $riderLocation->latitude,
-                $riderLocation->longitude
-            );
-
-            // Calculate required time (e.g., miles * 2 mins)
-            $requiredTimeMinutes = ceil($miles * 2);
-
-            // Add to data array
-            $data['required_time'] = $requiredTimeMinutes;
+        if (!$riderLocation) {
+            throw new \Exception("Rider location not found.");
         }
+
+        // Calculate distance
+        $miles = $this->calculateMiles(
+            $parcel->sender_lat,
+            $parcel->sender_long,
+            $riderLocation->latitude,
+            $riderLocation->longitude
+        );
+
+        // Calculate required time (e.g., miles * 2 mins)
+        $requiredTimeMinutes = ceil($miles * 2); // rounded up
+
+        // Add to data array
+        $data['required_time'] = $requiredTimeMinutes;
+
+        return ParcelBid::create($data);
     }
 
-    return ParcelBid::create($data);
-}
-
-
-
+    // return ParcelBid::create($data);
+    // }
     public function update($id, array $data)
     {
         // Add logic to update data

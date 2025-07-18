@@ -22,7 +22,7 @@ class ParcelBidService
     public function createBid(array $data)
     {
         Log::info('Creating Rider Bid:', $data);
-        return $this->repo->create($data);
+        return $this->repo->createRider($data);
     }
 
     public function getParcelBids($parcelId)
