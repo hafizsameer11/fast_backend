@@ -36,13 +36,17 @@ class SendParcelRepository
 
         return $earthRadius * $c;
     }
-   public function all($latitude, $longitude)
+public function all($latitude, $longitude)
 {
+    $dbLocation = RiderLocation::where('rider_id', auth()->id())
+        ->orderBy('created_at', 'desc')
+        ->first();
+
     $riderLocation = [
-        'latitude' => $latitude,
-        'longitude' => $longitude
+        'latitude' => $dbLocation?->latitude ?? $latitude,
+        'longitude' => $dbLocation?->longitude ?? $longitude,
     ];
-    Log::info("rider location" ,[$riderLocation]);
+
     $parcels = SendParcel::with('user')
         ->where('is_assigned', false)
         ->whereNotNull('payment_method')
@@ -52,12 +56,11 @@ class SendParcelRepository
     $updatedParcels = $parcels->map(function ($parcel) use ($riderLocation) {
         $defaultEta = 10;
 
-        // ✅ Check for missing coordinates
         $hasRiderCoords = $riderLocation['latitude'] && $riderLocation['longitude'];
         $hasSenderCoords = $parcel->sender_lat && $parcel->sender_long;
         $hasReceiverCoords = $parcel->receiver_lat && $parcel->receiver_long;
 
-        // 1️⃣ ETA to sender
+        // ETA to sender
         if ($hasRiderCoords && $hasSenderCoords) {
             $milesToSender = $this->calculateMiles(
                 $riderLocation['latitude'],
@@ -70,7 +73,7 @@ class SendParcelRepository
             $etaToSender = $defaultEta;
         }
 
-        // 2️⃣ ETA to receiver
+        // ETA to receiver
         if ($hasSenderCoords && $hasReceiverCoords) {
             $milesToReceiver = $this->calculateMiles(
                 $parcel->sender_lat,
@@ -83,7 +86,6 @@ class SendParcelRepository
             $etaToReceiver = $defaultEta;
         }
 
-        // 3️⃣ Attach values
         $parcel->eta_to_sender_min = $etaToSender;
         $parcel->eta_to_receiver_min = $etaToReceiver;
 
@@ -92,6 +94,7 @@ class SendParcelRepository
 
     return $updatedParcels;
 }
+
 
 
     public function find($id)
