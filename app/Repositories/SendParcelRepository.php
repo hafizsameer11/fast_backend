@@ -46,7 +46,7 @@ public function all($latitude, $longitude)
         'latitude' => $dbLocation?->latitude ?? $latitude,
         'longitude' => $dbLocation?->longitude ?? $longitude,
     ];
-
+    Log::info("Rider latitude used inside is from :  " . $riderLocation['latitude'] . ", Rider longitude: " . $riderLocation['longitude']);
     $parcels = SendParcel::with('user')
         ->where('is_assigned', false)
         ->whereNotNull('payment_method')
