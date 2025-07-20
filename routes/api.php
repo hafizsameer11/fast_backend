@@ -102,7 +102,13 @@ Route::prefix("auth/rider")->group(function () {
     Route::post("reset-password", [RiderAuthController::class, "resetPassword"]);
 });
 
-Route::prefix('auth/rider/verification')->middleware('auth:sanctum')->group(function () {
+// Route::prefix('auth/rider/verification')->middleware('auth:sanctum')->group(function () {
+//     Route::post('step-1', [RiderVerificationController::class, 'step1']);
+//     Route::post('step-2', [RiderVerificationController::class, 'step2']);
+//     Route::post('step-3', [RiderVerificationController::class, 'step3']);
+// });
+
+Route::prefix('auth/rider/verification')->group(function () {
     Route::post('step-1', [RiderVerificationController::class, 'step1']);
     Route::post('step-2', [RiderVerificationController::class, 'step2']);
     Route::post('step-3', [RiderVerificationController::class, 'step3']);

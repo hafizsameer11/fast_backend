@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
+use App\Models\User;
 use App\Repositories\RiderVerificationRepository;
+use Exception;
 
 class RiderVerificationService
 {
@@ -39,7 +41,11 @@ class RiderVerificationService
     }
     public function storeStep($step, $data)
     {
-        $userId = auth()->id(); // if using auth:sanctum
+        $user=User::where('email',$data['email'])->first();
+            if(!$user){
+                throw new Exception("User not found");
+            }
+        $userId = $user->id; // if using auth:sanctum
         return $this->RiderVerificationRepository->createOrUpdate($userId, $data);
     }
 }
