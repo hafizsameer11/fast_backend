@@ -41,11 +41,21 @@ class RiderVerificationService
     }
     public function storeStep($step, $data)
     {
-        $user=User::where('email',$data['email'])->first();
-            if(!$user){
+        if ($step == 1) {
+            $user = User::where('email', $data['email'])->first();
+            if (!$user) {
                 throw new Exception("User not found");
             }
-        $userId = $user->id; // if using auth:sanctum
+        } else {
+            // Get the most recently created user
+            $user = User::latest()->first();
+            if (!$user) {
+                throw new Exception("No users found in the system.");
+            }
+        }
+
+        $userId = $user->id;
+
         return $this->RiderVerificationRepository->createOrUpdate($userId, $data);
     }
 }
