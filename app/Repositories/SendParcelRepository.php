@@ -16,60 +16,82 @@ class SendParcelRepository
     {
         $this->geoService = $geoService;
     }
-
-    public function all($latitude, $longitude)
+   private function calculateMiles($lat1, $lon1, $lat2, $lon2): float
     {
-        // $user = Auth::user();
-        // $riderLocation = new RiderLocation();
-        // $riderLocation->rider_id = $user->id;
-        // $riderLocation->latitude = $latitude;
-        // $riderLocation->longitude = $longitude;
-        // $riderLocation->save();
-        // $riderLat = $latitude;
-        // $riderLng = $longitude;
-        // $radius = 100; // in KM
+        $earthRadius = 3958.8; // miles
 
-        // if (!$riderLat || !$riderLng) {
-        //     return response()->json(['error' => 'Missing rider coordinates'], 422);
-        // }
+        $lat1 = deg2rad($lat1);
+        $lon1 = deg2rad($lon1);
+        $lat2 = deg2rad($lat2);
+        $lon2 = deg2rad($lon2);
 
-        // $riderLocation = ['lat' => $riderLat, 'lng' => $riderLng];
-        // $filteredParcels = [];
+        $dLat = $lat2 - $lat1;
+        $dLon = $lon2 - $lon1;
 
-        $parcels = SendParcel::with('user')
-            ->where('is_assigned', false)
-            ->whereNotNull('payment_method')
-            ->latest()
-            ->get();
+        $a = sin($dLat / 2) ** 2 +
+            cos($lat1) * cos($lat2) *
+            sin($dLon / 2) ** 2;
 
+        $c = 2 * asin(sqrt($a));
 
-        // foreach ($parcels as $parcel) {
-        //     $senderRaw = $parcel->sender_address;
-        //     $receiverRaw = $parcel->receiver_address;
-
-        //     $resolvedSender = $this->geoService->geocodeToLatLng($senderRaw);
-        //     $resolvedReceiver = $this->geoService->geocodeToLatLng($receiverRaw);
-
-        //     if ($resolvedSender && $resolvedReceiver) {
-        //         $toSender = $this->geoService->getRoadMetrics($riderLocation, $resolvedSender);
-        //         $toReceiver = $this->geoService->getRoadMetrics($resolvedSender, $resolvedReceiver) ?? ['distance_km' => null, 'duration_min' => null];
-
-
-        //         if ($toSender && $toSender['distance_km'] <= $radius) {
-        //             $parcel->distance_to_sender_km = round($toSender['distance_km'], 2);
-        //             $parcel->eta_to_sender_min = $toSender['duration_min'];
-
-        //             $parcel->distance_to_receiver_km = round($toReceiver['distance_km'], 2);
-        //             $parcel->eta_to_receiver_min = $toReceiver['duration_min'];
-
-        //             $filteredParcels[] = $parcel;
-        //         }
-        //     }
-        // }
-
-        // return $filteredParcels;
-        return $parcels;
+        return $earthRadius * $c;
     }
+   public function all($latitude, $longitude)
+{
+    $riderLocation = [
+        'latitude' => $latitude,
+        'longitude' => $longitude
+    ];
+
+    $parcels = SendParcel::with('user')
+        ->where('is_assigned', false)
+        ->whereNotNull('payment_method')
+        ->latest()
+        ->get();
+
+    $updatedParcels = $parcels->map(function ($parcel) use ($riderLocation) {
+        $defaultEta = 10;
+
+        // ✅ Check for missing coordinates
+        $hasRiderCoords = $riderLocation['latitude'] && $riderLocation['longitude'];
+        $hasSenderCoords = $parcel->sender_lat && $parcel->sender_long;
+        $hasReceiverCoords = $parcel->receiver_lat && $parcel->receiver_long;
+
+        // 1️⃣ ETA to sender
+        if ($hasRiderCoords && $hasSenderCoords) {
+            $milesToSender = $this->calculateMiles(
+                $riderLocation['latitude'],
+                $riderLocation['longitude'],
+                $parcel->sender_lat,
+                $parcel->sender_long
+            );
+            $etaToSender = ceil($milesToSender * 2);
+        } else {
+            $etaToSender = $defaultEta;
+        }
+
+        // 2️⃣ ETA to receiver
+        if ($hasSenderCoords && $hasReceiverCoords) {
+            $milesToReceiver = $this->calculateMiles(
+                $parcel->sender_lat,
+                $parcel->sender_long,
+                $parcel->receiver_lat,
+                $parcel->receiver_long
+            );
+            $etaToReceiver = ceil($milesToReceiver * 2);
+        } else {
+            $etaToReceiver = $defaultEta;
+        }
+
+        // 3️⃣ Attach values
+        $parcel->eta_to_sender_min = $etaToSender;
+        $parcel->eta_to_receiver_min = $etaToReceiver;
+
+        return $parcel;
+    });
+
+    return $updatedParcels;
+}
 
 
     public function find($id)
