@@ -21,8 +21,8 @@ class RiderVerificationController extends Controller
     }
     public function step1(RiderVerificationStep1Request $request)
     {
+        Log::info("rirder verification step 1" ,[$request->all()]);
         $data = $request->validated();
-        Log::info("rirder verification step 1" ,[$data]);
         $verification = $this->RiderVerificationService->storeStep(1, $data);
         return ResponseHelper::success($verification, "Step 1 saved.");
     }
