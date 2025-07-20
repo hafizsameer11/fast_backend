@@ -270,7 +270,7 @@ class SendParcelController extends Controller
     public function getActiveParcelRider()
     {
         $user = Auth::user();
-        $parcel = SendParcel::where('rider_id', $user->id)->with('rider', 'acceptedBid')
+        $parcel = SendParcel::where('rider_id', $user->id)->with('rider', 'acceptedBid','user')
             ->whereIn('status', ['in_transit', 'ordered'])
             ->latest()
             ->first();
