@@ -47,36 +47,55 @@ class ParcelBidRepository
     }
 
     public function createRider(array $data)
-    {
-        $parcelId = $data['send_parcel_id'];
-        $parcel = SendParcel::findOrFail($parcelId);
-        $rider = Auth::user();
+{
+    $parcelId = $data['send_parcel_id'];
+    $parcel = SendParcel::findOrFail($parcelId);
+    $rider = Auth::user();
 
-        // Get rider's latest location
-        $riderLocation = RiderLocation::where('rider_id', $rider->id)
-            ->orderBy('created_at', 'desc')
-            ->first();
+    // Get rider's latest location
+    $riderLocation = RiderLocation::where('rider_id', $rider->id)
+        ->orderBy('created_at', 'desc')
+        ->first();
 
-        if (!$riderLocation) {
-            throw new \Exception("Rider location not found.");
-        }
-
-        // Calculate distance
-        $miles = $this->calculateMiles(
-            $parcel->sender_lat,
-            $parcel->sender_long,
-            $riderLocation->latitude,
-            $riderLocation->longitude
-        );
-
-        // Calculate required time (e.g., miles * 2 mins)
-        $requiredTimeMinutes = ceil($miles * 2); // rounded up
-
-        // Add to data array
-        $data['required_time'] = $requiredTimeMinutes;
-
-        return ParcelBid::create($data);
+    if (!$riderLocation) {
+        throw new \Exception("Rider location not found.");
     }
+
+    // Calculate distance
+    $miles = $this->calculateMiles(
+        $parcel->sender_lat,
+        $parcel->sender_long,
+        $riderLocation->latitude,
+        $riderLocation->longitude
+    );
+
+    // Calculate required time (e.g., miles * 2 mins)
+    $requiredTimeMinutes = ceil($miles * 2); // rounded up
+    $data['required_time'] = $requiredTimeMinutes;
+
+    // Check if a bid already exists for this rider and parcel
+    $existingBid = ParcelBid::where('rider_id', $rider->id)
+        ->where('send_parcel_id', $parcelId)
+        ->first();
+
+    if ($existingBid) {
+        // Update the bid amount and required time
+        $existingBid->update([
+            'bid_amount' => $data['bid_amount'],
+            'required_time' => $data['required_time'],
+        ]);
+        return $existingBid;
+    }
+
+    // If no bid exists, create a new one
+    return ParcelBid::create([
+        'rider_id' => $rider->id,
+        'send_parcel_id' => $parcelId,
+        'bid_amount' => $data['bid_amount'],
+        'required_time' => $requiredTimeMinutes,
+    ]);
+}
+
 
     // return ParcelBid::create($data);
     // }
