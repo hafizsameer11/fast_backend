@@ -42,7 +42,7 @@ class SendParcelRepository
         'latitude' => $latitude,
         'longitude' => $longitude
     ];
-
+    Log::info("rider location" ,[$riderLocation]);
     $parcels = SendParcel::with('user')
         ->where('is_assigned', false)
         ->whereNotNull('payment_method')
