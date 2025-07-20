@@ -168,10 +168,11 @@ Route::middleware('auth:sanctum')->prefix('history')->group(function () {
     Route::get('rider', [HistoryController::class, 'riderHistory']);
     Route::get('user', [HistoryController::class, 'userHistory']);
 });
-Route::prefix('withdrawal')->group(function () {
+Route::middleware('auth:sanctum')->prefix('withdrawal')->group(function () {
     Route::post('store', [WithdrawalController::class, 'store']);
     Route::get('list', [WithdrawalController::class, 'index']);
 });
+
 
 
 Route::prefix('chat')->middleware('auth:sanctum')->group(function () {
@@ -287,9 +288,9 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/locations/create', [LocationController::class, 'store']);
         Route::put('/locations/update/{id}', [LocationController::class, 'update']);    // Update
         Route::delete('/locations/delete/{id}', [LocationController::class, 'destroy']);
-        
+
         Route::get('/dashboard', [AnalyticController::class, 'dashboard']);          // Get all
-        
+
         Route::get('/analytics/UserAnalytics', [AnalyticController::class, 'UserAnalytics']);          // Get all
         Route::get('/analytics/OrderAnalytics', [AnalyticController::class, 'OrderAnalytics']);          // Get all
         Route::get('/analytics/RiderAnalytics', [AnalyticController::class, 'RiderAnalytics']);          // Get all

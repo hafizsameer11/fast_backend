@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Services\ParcelBidService;
 use App\Helpers\ResponseHelper;
 use App\Http\Requests\ParcelBidRequest;
+use Illuminate\Support\Facades\Log;
 
 class ParcelBidController extends Controller
 {
@@ -57,7 +58,7 @@ class ParcelBidController extends Controller
         $data = $request->validated();
         $data['user_id'] = auth()->id(); // ✅ user ID must be set
         $data['created_by'] = 'user';
-
+        Log::info("data for bid creation by user",[$data]);
         $bid = $this->service->createUserBid($data);
         return ResponseHelper::success($bid, "User bid sent successfully");
     }

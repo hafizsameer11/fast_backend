@@ -40,12 +40,12 @@ class WithdrawalService
     }
     public function update($id, array $data)
     {
-        return $this->WithdrawalRepository->update($id, $data);
+        return $this->withdrawalRepository->update($id, $data);
     }
 
     public function delete($id)
     {
-        return $this->WithdrawalRepository->delete($id);
+        return $this->withdrawalRepository->delete($id);
     }
     public function getAll()
     {
