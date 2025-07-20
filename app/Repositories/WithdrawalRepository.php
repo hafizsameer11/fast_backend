@@ -21,9 +21,11 @@ class WithdrawalRepository
 
     public function create(array $data)
     {
+        $user = Auth::user();
+        $data['user_id'] = $user->id;
+        
         $withdrawal = Withdrawal::create($data);
         //cut balance from wallet
-        $user = Auth::user();
         $wallet = Wallet::where('user_id', $data['user_id'])->first();
         $wallet->balance -= $data['amount'];
         $wallet->save();
