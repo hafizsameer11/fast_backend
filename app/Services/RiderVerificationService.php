@@ -42,7 +42,7 @@ class RiderVerificationService
     public function storeStep($step, $data)
     {
         if ($step == 1) {
-            $user = User::where('email', $data['email'])->first();
+            $user = User::where('email', $data['email_address'])->first();
             if (!$user) {
                 throw new Exception("User not found");
             }
