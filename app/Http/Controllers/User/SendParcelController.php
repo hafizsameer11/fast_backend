@@ -272,7 +272,7 @@ class SendParcelController extends Controller
         $user = Auth::user();
         $parcel = SendParcel::where('rider_id', $user->id)->with('rider', 'acceptedBid','user')
             ->whereIn('status', ['in_transit', 'ordered'])
-            ->latest()
+            ->orderBy('created_at','desc')
             ->first();
 
         return ResponseHelper::success($parcel, "Parcel details retrieved successfully");
