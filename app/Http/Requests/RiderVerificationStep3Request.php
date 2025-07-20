@@ -15,9 +15,9 @@ class RiderVerificationStep3Request extends FormRequest
     public function rules(): array
     {
         return [
-            'passport_photo' => 'required|image|mimes:jpg,jpeg,png|max:2048',
-            'rider_permit_upload' => 'required|mimes:jpg,jpeg,png,pdf|max:2048',
-            'vehicle_video' => 'required|mimes:mp4,mov,avi,webm|max:10240', // 10MB max
+            'passport_photo' => 'required|image',
+            'rider_permit_upload' => 'required',
+            'vehicle_video' => 'required', // 10MB max
         ];
     }
     protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator)

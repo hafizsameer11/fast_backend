@@ -9,6 +9,7 @@ use App\Http\Requests\RiderVerificationStep3Request;
 use App\Services\RiderVerificationService;
 use App\Helpers\ResponseHelper;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class RiderVerificationController extends Controller
 {
@@ -21,6 +22,7 @@ class RiderVerificationController extends Controller
     public function step1(RiderVerificationStep1Request $request)
     {
         $data = $request->validated();
+        Log::info("rirder verification step 1" ,[$data]);
         $verification = $this->RiderVerificationService->storeStep(1, $data);
         return ResponseHelper::success($verification, "Step 1 saved.");
     }
