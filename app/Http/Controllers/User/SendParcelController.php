@@ -121,13 +121,11 @@ class SendParcelController extends Controller
         $request->validate(['pickup_code' => 'required|digits:4']);
 
         // Debugging: Output the pickup_code received from the request
-        echo "Received Pickup Code: " . $request->pickup_code . "\n";
 
         // Verify the pickup code via the service
         $result = $this->sendParcelService->verifyPickupCode($id, $request->pickup_code);
 
         // Debugging: Output the verification result
-        echo "Verification Result: " . ($result ? 'Success' : 'Failed') . "\n";
 
         // Check the result of the verification
         if (!$result) {

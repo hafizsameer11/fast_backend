@@ -77,18 +77,13 @@ class SendParcelService
     {
         $parcel = $this->sendParcelRepository->find($id);
 
-        echo "Verifying Pickup Code for Parcel ID: " . $id . "\n";
 
         if (!$parcel) {
-            echo "Parcel not found with ID: " . $id . "\n";
             return false;
         }
 
-        echo "Expected Pickup Code: " . (string) $parcel->pickup_code . "\n";
-        echo "Received Pickup Code: " . (string) $code . "\n";
 
         if ((string) $parcel->pickup_code !== (string) $code) {
-            echo "Pickup Code Verification Failed for Parcel ID: " . $id . "\n";
             return false;
         }
 
@@ -99,11 +94,6 @@ class SendParcelService
         ]);
 
         $parcel->refresh(); // ✅ force re-fetch the updated fields
-
-        echo "After Update — Status: " . $parcel->status . "\n";
-        echo "After Update — is_pickup_confirmed: " . $parcel->is_pickup_confirmed . "\n";
-        echo "Pickup confirmed for Parcel ID: " . $id . "\n";
-        echo "Status updated to 'in_transit'.\n";
 
         return true;
     }
