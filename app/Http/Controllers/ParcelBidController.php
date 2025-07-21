@@ -24,7 +24,7 @@ class ParcelBidController extends Controller
         $data = $request->validated();
         $data['rider_id'] = auth()->id(); // ✅ this must be set if rider is bidding
         $data['created_by'] = 'rider'; // ensure this is set
-
+ $data['bid_amount'] = (int) str_replace(',', '', $data['bid_amount']);
         $bid = $this->service->createBid($data);
         return ResponseHelper::success($bid, "Bid sent successfully");
     }
