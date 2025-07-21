@@ -25,7 +25,7 @@ class StepThreeRequest extends FormRequest
         return [
             'parcel_name' => 'required|string',
             'parcel_category' => 'required|string',
-            'parcel_value' => 'required|numeric',
+            'parcel_value' => 'required',
             'description' => 'nullable|string',
         ];
     }
