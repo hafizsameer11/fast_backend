@@ -90,6 +90,7 @@ class SendParcelService
         $parcel->update([
             'is_pickup_confirmed' => 'yes',
             'status' => 'in_transit',
+            'picked_up_at' => now(),
             'in_transit_at' => now(),
         ]);
 
