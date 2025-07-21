@@ -24,7 +24,7 @@ class ParcelBidRequest extends FormRequest
     {
         return [
             'send_parcel_id' => 'required|exists:send_parcels,id',
-            'bid_amount' => 'nullable|numeric',
+            'bid_amount' => 'nullable',
             'message' => 'nullable|string|max:255',
         ];
     }
