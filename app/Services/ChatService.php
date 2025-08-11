@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Repositories\ChatRepository;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ChatService
 {
@@ -38,10 +39,28 @@ class ChatService
     {
         return $this->chatRepository->delete($id);
     }
-    public function sendMessage(array $data)
+  public function sendMessage(array $data)
     {
+        $file = $data['image'] ?? null;   // <-- get image here
+        unset($data['image']);            // don't persist raw file
+
         $data['sender_id'] = Auth::id();
-        $data['sent_at'] = now();
+        $data['sent_at']   = now();
+        $data['is_read']   = 0;
+
+        if ($file) {
+            // store on public disk: storage/app/public/chat_uploads/YYYY/MM/...
+            $path = $file->store('chat_uploads/'.date('Y/m'), 'public');
+
+            // /storage/... -> absolute URL
+            $data['image_url']    = url(Storage::url($path));
+            $data['image_path']   = $path;           // optional but useful
+            $data['message_type'] = 'image';
+            $data['message']      = $data['message'] ?? null; // allow image-only
+        } else {
+            $data['message_type'] = 'text';
+        }
+
         return $this->chatRepository->create($data);
     }
 

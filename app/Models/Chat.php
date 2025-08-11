@@ -14,7 +14,8 @@ class Chat extends Model
         'receiver_id',
         'message',
         'sent_at',
-        'is_read'
+        'is_read',
+        'image'
     ];
 
     protected $casts = [
