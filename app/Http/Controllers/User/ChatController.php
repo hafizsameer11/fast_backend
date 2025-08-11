@@ -28,7 +28,7 @@ class ChatController extends Controller
     public function send(ChatRequest $request)
     {
         try {
-            Log::info('File exists?', $request->hasFile('image') ? 'yes' : 'no');
+            Log::info('File exists?', [$request->hasFile('image') ? 'yes' : 'no']);
 Log::info('File:', [$request->file('image')]);
 
             Log::info('Request data: ' . json_encode($request->validated()));
