@@ -25,7 +25,7 @@ class ChatRequest extends FormRequest
         return [
             'receiver_id' => 'required|exists:users,id',
         'message' => 'nullable|string',
-            'image'=>'nullable'
+            'image'=>'nullable|image'
         ];
     }
 

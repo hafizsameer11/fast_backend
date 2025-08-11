@@ -28,7 +28,7 @@ class ChatController extends Controller
     public function send(ChatRequest $request)
     {
         try {
-            Log::info('Request data: ' . json_encode($request->all()));
+            Log::info('Request data: ' . json_encode($request->validated()));
             $recipientId = $request->input('receiver_id');
             $riderId = auth()->id();
 
