@@ -96,45 +96,63 @@ class ChatService
                 ->where('rider_id', $riderId);
         })->get(['id', 'name', 'email', 'phone', 'profile_picture']);
     }
-    public function getRidersConnectedToUser($userId)
-    {
-        $riders = \App\Models\User::whereIn('id', function ($query) use ($userId) {
-            $query->select('rider_id')
-                ->from('send_parcels')
-                ->where('user_id', $userId);
-        })->get(['id', 'name', 'email', 'phone', 'profile_picture']);
+  public function getRidersConnectedToUser($userId)
+{
+    $riders = \App\Models\User::whereIn('id', function ($query) use ($userId) {
+        $query->select('rider_id')
+              ->from('send_parcels')
+              ->where('user_id', $userId);
+    })->get(['id', 'name', 'email', 'phone', 'profile_picture']);
 
-        // Attach last message & unread count
-        $riders->map(function ($rider) use ($userId) {
-            // Last message
-            $lastMessage = \App\Models\Chat::where(function ($query) use ($rider, $userId) {
-                $query->where('sender_id', $userId)->where('receiver_id', $rider->id);
+    $riders->map(function ($rider) use ($userId) {
+        // Fetch last message between user <-> rider
+        $lastMessage = \App\Models\Chat::where(function ($q) use ($rider, $userId) {
+                $q->where('sender_id', $userId)->where('receiver_id', $rider->id);
             })
-                ->orWhere(function ($query) use ($rider, $userId) {
-                    $query->where('sender_id', $rider->id)->where('receiver_id', $userId);
-                })
-                ->latest('sent_at')
-                ->first();
+            ->orWhere(function ($q) use ($rider, $userId) {
+                $q->where('sender_id', $rider->id)->where('receiver_id', $userId);
+            })
+            ->latest('sent_at')
+            ->first();
 
-            $rider->last_message = $lastMessage ? [
-                'message' => $lastMessage->message,
-                'sender_id' => $lastMessage->sender_id,
-                'sent_at' => $lastMessage->sent_at,
-            ] : null;
+        // 💡 Fallback text if message is null but image exists
+        $lastMessageText = null;
+        $isImage = false;
+        $imageUrl = null;
 
-            // Unread count (messages from rider to user that are not read)
-            $unreadCount = \App\Models\Chat::where('sender_id', $rider->id)
-                ->where('receiver_id', $userId)
-                ->where('is_read', 0)
-                ->count();
+        if ($lastMessage) {
+            $hasText = isset($lastMessage->message) && trim($lastMessage->message) !== '';
+            $hasImage = !empty($lastMessage->image); // adjust if your column is named differently
 
-            $rider->unread_count = $unreadCount;
+            if ($hasText) {
+                $lastMessageText = $lastMessage->message;
+            } elseif ($hasImage) {
+                $lastMessageText = 'sent an image';
+                $isImage = true;
+                $imageUrl = $lastMessage->image; // full URL if you store it; else build with Storage::url(...)
+            }
+        }
 
-            return $rider;
-        });
+        $rider->last_message = $lastMessage ? [
+            'message'    => $lastMessageText,
+            'is_image'   => $isImage,
+            'image_url'  => $imageUrl,
+            'sender_id'  => $lastMessage->sender_id,
+            'sent_at'    => $lastMessage->sent_at,
+        ] : null;
 
-        return $riders;
-    }
+        // Unread count (from rider -> user)
+        $rider->unread_count = \App\Models\Chat::where('sender_id', $rider->id)
+            ->where('receiver_id', $userId)
+            ->where('is_read', 0)
+            ->count();
+
+        return $rider;
+    });
+
+    return $riders;
+}
+
 
 
     public function getConversationBetweenUsers($userId, $receiverId)
