@@ -11,6 +11,7 @@ use App\Services\SupportChatService;
 use App\Helpers\ResponseHelper;
 use App\Models\Chat;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class ChatController extends Controller
 {
@@ -27,6 +28,7 @@ class ChatController extends Controller
     public function send(ChatRequest $request)
     {
         try {
+            Log::info('Request data: ' . json_encode($request->all()));
             $recipientId = $request->input('receiver_id');
             $riderId = auth()->id();
 
