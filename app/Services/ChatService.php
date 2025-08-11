@@ -42,7 +42,7 @@ class ChatService
   public function sendMessage(array $data)
     {
         $file = $data['image'] ?? null;   // <-- get image here
-        unset($data['image']);            // don't persist raw file
+        // unset($data['image']);            // don't persist raw file
 
         $data['sender_id'] = Auth::id();
         $data['sent_at']   = now();
@@ -53,7 +53,7 @@ class ChatService
             $path = $file->store('chat_uploads/'.date('Y/m'), 'public');
 
             // /storage/... -> absolute URL
-            $data['image_url']    = url(Storage::url($path));
+            $data['image']    = url(Storage::url($path));
             $data['image_path']   = $path;           // optional but useful
             $data['message_type'] = 'image';
             $data['message']      = $data['message'] ?? null; // allow image-only
