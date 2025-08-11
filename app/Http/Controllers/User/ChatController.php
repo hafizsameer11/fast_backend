@@ -9,6 +9,8 @@ use App\Http\Requests\SendMessageRequest;
 use App\Services\ChatService;
 use App\Services\SupportChatService;
 use App\Helpers\ResponseHelper;
+use App\Models\Chat;
+use Illuminate\Support\Facades\Auth;
 
 class ChatController extends Controller
 {
@@ -57,6 +59,15 @@ class ChatController extends Controller
         }
     }
 
+    public function unreadCount(){
+       try{
+         $user=Auth::user();
+        $unreadCount=Chat::where('receiver_id', $user->id)->where('is_read', false)->count();
+        return ResponseHelper::success($unreadCount, "Unread count loaded");
+       }catch(\Throwable $th){
+        return ResponseHelper::error($th->getMessage());
+       }
+    }
     public function connectedUsers()
     {
         try {

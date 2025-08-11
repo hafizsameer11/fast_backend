@@ -184,6 +184,7 @@ Route::middleware('auth:sanctum')->prefix('withdrawal')->group(function () {
 Route::prefix('chat')->middleware('auth:sanctum')->group(function () {
     Route::post('send', [ChatController::class, 'send']);
     Route::get('messages/{userId}', [ChatController::class, 'getMessagesWithUser']);
+    Route::get('unread-count', [ChatController::class, 'unreadCount']);
     Route::get('inbox', [ChatController::class, 'inbox']);
     Route::get('connected-users', [ChatController::class, 'connectedUsers']);
     Route::get('connected-riders', [ChatController::class, 'connectRiders']);
