@@ -13,7 +13,8 @@ class Chat extends Model
         'sender_id',
         'receiver_id',
         'message',
-        'sent_at'
+        'sent_at',
+        'is_read'
     ];
 
     protected $casts = [
