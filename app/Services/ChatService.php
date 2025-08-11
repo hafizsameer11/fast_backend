@@ -85,8 +85,9 @@ class ChatService
                 ->where('user_id', $userId);
         })->get(['id', 'name', 'email', 'phone', 'profile_picture']);
 
-        // Attach last message manually without changing structure
+        // Attach last message & unread count
         $riders->map(function ($rider) use ($userId) {
+            // Last message
             $lastMessage = \App\Models\Chat::where(function ($query) use ($rider, $userId) {
                 $query->where('sender_id', $userId)->where('receiver_id', $rider->id);
             })
@@ -102,11 +103,20 @@ class ChatService
                 'sent_at' => $lastMessage->sent_at,
             ] : null;
 
+            // Unread count (messages from rider to user that are not read)
+            $unreadCount = \App\Models\Chat::where('sender_id', $rider->id)
+                ->where('receiver_id', $userId)
+                ->where('is_read', 0)
+                ->count();
+
+            $rider->unread_count = $unreadCount;
+
             return $rider;
         });
 
         return $riders;
     }
+
 
     public function getConversationBetweenUsers($userId, $receiverId)
     {
