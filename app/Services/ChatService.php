@@ -2,6 +2,8 @@
 
 namespace App\Services;
 
+use App\Models\Chat;
+use App\Models\User;
 use App\Repositories\ChatRepository;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
@@ -88,14 +90,86 @@ class ChatService
     }
 
 
+    // public function getUsersConnectedToRider($riderId)
+    // {
+    //     return \App\Models\User::whereIn('id', function ($query) use ($riderId) {
+    //         $query->select('user_id')
+    //             ->from('send_parcels')
+    //             ->where('rider_id', $riderId);
+    //     })->get(['id', 'name', 'email', 'phone', 'profile_picture']);
+    // }
     public function getUsersConnectedToRider($riderId)
-    {
-        return \App\Models\User::whereIn('id', function ($query) use ($riderId) {
-            $query->select('user_id')
-                ->from('send_parcels')
-                ->where('rider_id', $riderId);
-        })->get(['id', 'name', 'email', 'phone', 'profile_picture']);
-    }
+{
+    // Pull users connected to the rider
+    $users = User::whereIn('id', function ($query) use ($riderId) {
+        $query->select('user_id')
+              ->from('send_parcels')
+              ->where('rider_id', $riderId);
+    })->get(['id', 'name', 'email', 'phone', 'profile_picture']);
+
+    // Enrich with last message + unread count (mirror of connected riders)
+    $users = $users->map(function ($user) use ($riderId) {
+        // Last message (either direction)
+        $lastMessage = Chat::where(function ($q) use ($user, $riderId) {
+                $q->where('sender_id', $riderId)
+                  ->where('receiver_id', $user->id);
+            })
+            ->orWhere(function ($q) use ($user, $riderId) {
+                $q->where('sender_id', $user->id)
+                  ->where('receiver_id', $riderId);
+            })
+            ->latest('sent_at')
+            ->first();
+
+        // Same fallback as connected riders
+        $lastMessageText = null;
+        $isImage = false;
+        $imageUrl = null;
+
+        if ($lastMessage) {
+            $hasText  = isset($lastMessage->message) && trim($lastMessage->message) !== '';
+            $hasImage = !empty($lastMessage->image); // adjust column name if needed
+
+            if ($hasText) {
+                $lastMessageText = $lastMessage->message;
+            } elseif ($hasImage) {
+                $lastMessageText = 'sent an image';
+                $isImage = true;
+                $imageUrl = $lastMessage->image; // or Storage::url($lastMessage->image)
+            }
+        }
+
+        $user->last_message = $lastMessage ? [
+            'message'    => $lastMessageText,
+            'is_image'   => $isImage,
+            'image_url'  => $imageUrl,
+            'sender_id'  => $lastMessage->sender_id,
+            'sent_at'    => $lastMessage->sent_at,
+        ] : null;
+
+        // Unread for rider: messages user -> rider, is_read=0 (same rule as connected riders)
+        $user->unread_count = Chat::where('sender_id', $user->id)
+            ->where('receiver_id', $riderId)
+            ->where('is_read', 0)
+            ->count();
+
+        return $user;
+    });
+
+    // Apply the SAME ordering used in getRidersConnectedToUser():
+    // 1) unread_count DESC
+    // 2) last_message.sent_at DESC (nulls last)
+    $users = $users->sort(function ($a, $b) {
+        if ($a->unread_count !== $b->unread_count) {
+            return $b->unread_count <=> $a->unread_count;
+        }
+        $aTime = isset($a->last_message['sent_at']) ? strtotime($a->last_message['sent_at']) : 0;
+        $bTime = isset($b->last_message['sent_at']) ? strtotime($b->last_message['sent_at']) : 0;
+        return $bTime <=> $aTime;
+    })->values();
+
+    return $users;
+}
   public function getRidersConnectedToUser($userId)
 {
     $riders = \App\Models\User::whereIn('id', function ($query) use ($userId) {
